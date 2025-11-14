@@ -1,25 +1,645 @@
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>15パズル</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <title>つまらないお世話ゲーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #f6f2ff, #ffeef8);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Hiragino Sans", "Noto Sans JP", sans-serif;
+    }
+
+    .game-container {
+      width: min(420px, 100% - 32px);
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      padding: 18px 18px 20px;
+      box-sizing: border-box;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .level-badge {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3f0ff;
+      color: #4b3f72;
+      white-space: nowrap;
+    }
+
+    .character-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 6px 0 12px;
+    }
+
+    #character {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      margin-bottom: 8px;
+      transition: all 0.4s ease;
+    }
+
+    /* 卵 */
+    .egg {
+      background: radial-gradient(circle at 30% 20%, #ffffff, #ffd6f5);
+      border-radius: 50%;
+      border: 4px solid #ffb3e6;
+    }
+
+    /* 不細工な幼虫 */
+    .larva {
+      background: #c5f3ff;
+      border-radius: 60% 40% 70% 30%;
+      border: 4px solid #8cd3e6;
+      transform: rotate(-5deg);
+    }
+
+    /* 見たことない形のさなぎ */
+    .pupa {
+      background: #fce8b2;
+      border-radius: 30% 70% 40% 60%;
+      border: 4px dashed #f4b400;
+      transform: rotate(7deg);
+    }
+
+    /* ベース：最後の変なキャラ */
+    .weird {
+      border-radius: 40% 60% 60% 40%;
+      border: 4px solid #555;
+      transform: rotate(-12deg) scale(1.05);
+    }
+
+    /* エンディング分岐：３タイプの色違い */
+    .ending-strict {
+      background: conic-gradient(
+        from 45deg,
+        #d0d0d0,
+        #b0b0ff,
+        #e0e0e0,
+        #b0b0ff,
+        #d0d0d0
+      );
+    }
+
+    .ending-balance {
+      background: conic-gradient(
+        from 45deg,
+        #ffd1dc,
+        #c4e3ff,
+        #ffe9b3,
+        #d9ffbf,
+        #ffd1dc
+      );
+    }
+
+    .ending-fun {
+      background: conic-gradient(
+        from 45deg,
+        #ffe6b3,
+        #ffb3d9,
+        #ffe6b3,
+        #ffb3d9,
+        #ffe6b3
+      );
+    }
+
+    .face {
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .eye {
+      width: 10px;
+      height: 10px;
+      background: #333;
+      border-radius: 50%;
+      display: inline-block;
+      margin: 0 6px;
+    }
+
+    .mouth {
+      width: 26px;
+      height: 14px;
+      border-bottom: 3px solid #333;
+      border-radius: 0 0 26px 26px;
+      margin: 6px auto 0;
+    }
+
+    .mouth.weird-mouth {
+      border-bottom: none;
+      border-top: 3px solid #333;
+      border-radius: 26px 26px 0 0;
+      transform: rotate(-10deg);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #f0f0f5;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #ff9ad5, #ffc46b);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.8rem;
+      text-align: right;
+      margin-bottom: 8px;
+      color: #776f8a;
+    }
+
+    .task-box {
+      background: #faf7ff;
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .task-label {
+      font-size: 0.78rem;
+      opacity: 0.7;
+      margin-bottom: 2px;
+    }
+
+    .task-text {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .buttons button {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #f0ebff;
+      text-align: left;
+      transition: transform 0.05s ease, box-shadow 0.05s ease,
+        background 0.15s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .buttons button span.small {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+
+    .buttons button:nth-child(1) {
+      background: #ffe4f5;
+    }
+
+    .buttons button:nth-child(2) {
+      background: #fff5d9;
+    }
+
+    .buttons button:nth-child(3) {
+      background: #e7ffe1;
+    }
+
+    .buttons button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .buttons button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .log-line {
+      font-size: 0.75rem;
+      min-height: 1.1em;
+      color: #7b748e;
+      margin-bottom: 4px;
+    }
+
+    .result {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: #4a445e;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .restart-btn {
+      margin-top: 10px;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      background: #ece6ff;
+      cursor: pointer;
+    }
+
+    footer {
+      margin-top: 6px;
+      text-align: center;
+      font-size: 0.7rem;
+      opacity: 0.6;
+      color: #6b647c;
+    }
+  </style>
 </head>
 <body>
-    <h1>15パズル</h1>
-    <div id="game-container">
-        <div id="puzzle-board"></div>
-        <div id="controls">
-            <div id="preview-container">
-                <p>Complete Image:</p>
-                <img id="preview-image" src="cat.png.png" alt="Complete puzzle image">
-            </div>
-            <p>Moves: <span id="move-count">0</span></p>
-            <p>Time: <span id="timer">0</span>s</p>
-            <button id="shuffle-button">Shuffle</button>
+  <div class="game-container">
+    <header>
+      <div class="title">つまらないお世話ゲーム</div>
+      <div class="level-badge" id="stage-label">たまごステージ</div>
+    </header>
+
+    <div class="character-area">
+      <div id="character" class="egg">
+        <div class="face">
+          <div class="eye"></div>
+          <div class="eye"></div>
+          <div class="mouth" id="mouth"></div>
         </div>
-        <p id="win-message" class="hidden">You Win!</p>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text" id="progress-text">0 / 100</div>
     </div>
-    <script src="index.js"></script>
+
+    <div class="task-box" id="task-box">
+      <div class="task-label" id="task-label">No.1 のお世話</div>
+      <div class="task-text" id="task-text"></div>
+    </div>
+
+    <div class="buttons" id="buttons">
+      <button data-score="0">
+        これはつまらない
+        <span class="small">（いい意味で）</span>
+      </button>
+      <button data-score="1">
+        まあつまらない
+      </button>
+      <button data-score="2">
+        意外と好きかもしれない
+      </button>
+    </div>
+
+    <div class="log-line" id="log-line"></div>
+    <div class="result hidden" id="result"></div>
+
+    <footer>※１００個ぜんぶジャッジするとキャラが完成します。</footer>
+  </div>
+
+  <script>
+    const TOTAL_TASKS = 100;
+
+    const tasks = [
+      "スマホの充電残量を毎朝チェックする",
+      "観葉植物の葉っぱのほこりをふく",
+      "使っていないアプリの通知をオフにする",
+      "冷蔵庫の賞味期限シールをながめて確認する",
+      "リモコンをきれいに並べ直す",
+      "ティッシュの箱を部屋ごとにそろえる",
+      "水筒のパッキンを毎回ちゃんとはめる",
+      "えんぴつを一本だけきれいにけずる",
+      "いらないレシートを一枚だけ捨てる",
+      "カバンの中のごみを一個だけ捨てる",
+      "机の上のものを右から左へ並べ替える",
+      "カーテンのしわを手でのばす",
+      "ゴミ箱のビニール袋をぴしっと広げる",
+      "コンセントまわりのほこりをちょっとだけ取る",
+      "ハンカチをきれいに四つ折りにたたむ",
+      "リップクリームのふたをそっと閉める",
+      "消しゴムのカスを集めて丸める",
+      "ペン立てのペンを色順にならべる",
+      "毎朝、時計を一回だけ見て「ふーん」と思う",
+      "カレンダーの日付に小さく〇をつける",
+      "マグカップの取っ手の向きをそろえる",
+      "イスを机にきちんとしまう",
+      "靴を玄関でつま先そろえて並べる",
+      "ブランケットの向きをきれいに直す",
+      "リュックのチャックを全部しめる確認をする",
+      "テレビの音量をいつもの数字に戻す",
+      "部屋のスイッチを全部オフか確認する",
+      "えんぴつの芯の長さをそろえようとしてみる",
+      "ノートの角をきちんと合わせてそろえる",
+      "メガネ拭きでメガネを一拭きだけする",
+      "テーブルの上を手のひらでさっとなでてゴミを集める",
+      "プリントの端をそろえてトントンする",
+      "ポケットに何も入っていないか確認する",
+      "マスクの予備を一枚だけカバンに入れておく",
+      "スマホ画面の指紋をちょっとだけふく",
+      "お気に入りサイトのタブを閉じずに並べ直す",
+      "充電ケーブルをくるっと巻いておきなおす",
+      "鍵の位置を毎回同じ場所に戻す",
+      "同じペンで今日の日付だけ書いてみる",
+      "ごみの日かどうかだけカレンダーで確認する",
+      "使っていないノートの一枚目だけめくって戻す",
+      "プリントのクリアファイルを色ごとに分けてみる",
+      "洗面台の水しぶきを指でなでて消す",
+      "イスの高さをちょっとだけ調整する",
+      "スリッパをそろえてスタートラインを作る",
+      "ティッシュを一枚だけ予備でポケットに入れる",
+      "お気に入りのシャーペンだけ芯を補充する",
+      "机の角とノートの角をぴったり合わせて置く",
+      "部屋の時計とスマホの時間を見比べる",
+      "SNSの通知マークを全部消してゼロにする",
+      "冷蔵庫の中のペットボトルの向きをそろえる",
+      "ペンのキャップがちゃんとはまっているか確認する",
+      "えんぴつの名前シールがはがれてないか見る",
+      "プリントの穴あけ位置を揃えてながめる",
+      "洗濯物のハンガーの向きをそろえる",
+      "今日使わない文房具をペンケースから一個出しておく",
+      "お気に入りのスタンプを一つだけ押して満足する",
+      "スマホのホーム画面のアイコンを一個だけ移動する",
+      "教科書に付箋を一枚だけ貼りかえる",
+      "カーテンの開き具合を左右対称にととのえる",
+      "椅子の下に何も落ちていないかのぞきこむ",
+      "えんぴつの長さ順に並べてニヤッとする",
+      "ペットボトルのラベルをまっすぐに戻す",
+      "カバンの中でペンケースの位置を決める",
+      "上着のファスナーを一番上まで上げてみる",
+      "机の引き出しを一回だけ開けて何もせず閉める",
+      "お気に入り消しゴムの角を一つだけ使ってみる",
+      "水道のレバーをまっすぐな角度にそろえる",
+      "トイレットペーパーの先端を三角に折る",
+      "メモ帳の表紙をなでてからカバンに入れる",
+      "リモコンの向きをテレビにぴったり揃えて置く",
+      "つめきりを決まった場所に戻すだけの仕事",
+      "USBメモリのキャップをなくしてないか確認する",
+      "カギ束のキーホルダーの向きを整える",
+      "今日使わないカードを財布の奥にしまいなおす",
+      "鏡の前で前髪を一回だけ直す",
+      "椅子の足を全部同じ線の上にそろえる",
+      "スマホの画面の明るさをいつもの明るさに調整する",
+      "使いかけのノートのしおりをきれいに差しなおす",
+      "机の上の本のタイトルが読める向きにそろえる",
+      "タオルをくるっと巻いて同じ高さにそろえる",
+      "カーテンのタッセル（まとめるひも）をきれいな位置に直す",
+      "ごみ袋の口をきゅっと結び直すだけ",
+      "洗面台のコップをまっすぐの向きに置く",
+      "ハンドクリームを手の甲に一回だけ塗る",
+      "使い終わったイスを元の場所にぴったり戻す",
+      "机の下の足元マットの向きを直す",
+      "充電器のコンセントを根元までしっかり差しこむ",
+      "ホワイトボードのペンを色順に置き直す",
+      "今日のプリントを一枚だけファイルにしまう",
+      "教科書の角が折れていたらそっとのばす",
+      "使い終わったお皿をシンクの端にきれいに重ねる",
+      "ペットボトルのキャップを集めて同じ場所に入れる",
+      "折りたたみ傘のヒモをちゃんと巻き直す",
+      "ポケットティッシュの残り枚数をなんとなく確認する",
+      "イスの背もたれにかけた上着のしわをのばす",
+      "机の上の充電コードを一本だけほどいて整える",
+      "電気を消す前に部屋を一回見回す",
+      "寝る前に枕の位置をちょっとだけ中央に直す",
+      "「今日もなんか世話したな」と小さく思いながら寝る"
+    ];
+
+    const characterEl = document.getElementById("character");
+    const mouthEl = document.getElementById("mouth");
+    const stageLabelEl = document.getElementById("stage-label");
+    const progressFillEl = document.getElementById("progress-fill");
+    const progressTextEl = document.getElementById("progress-text");
+    const taskBoxEl = document.getElementById("task-box");
+    const taskLabelEl = document.getElementById("task-label");
+    const taskTextEl = document.getElementById("task-text");
+    const buttonsEl = document.getElementById("buttons");
+    const logLineEl = document.getElementById("log-line");
+    const resultEl = document.getElementById("result");
+
+    let currentIndex = 0;
+    const ratings = [];
+
+    function getStage(completed) {
+      if (completed < 10) return "egg";
+      if (completed < 20) return "larva";
+      if (completed < TOTAL_TASKS) return "pupa";
+      return "weird";
+    }
+
+    function getStageLabel(stage) {
+      if (stage === "egg") return "たまごステージ";
+      if (stage === "larva") return "幼虫ステージ";
+      if (stage === "pupa") return "さなぎステージ";
+      return "へんなキャラステージ（コンプリート）";
+    }
+
+    function updateCharacterStage(stage) {
+      characterEl.className = stage;
+      if (stage === "weird") {
+        mouthEl.classList.add("weird-mouth");
+      } else {
+        mouthEl.classList.remove("weird-mouth");
+      }
+      stageLabelEl.textContent = getStageLabel(stage);
+    }
+
+    function updateProgress() {
+      const completed = currentIndex;
+      const percentage = (completed / TOTAL_TASKS) * 100;
+      progressFillEl.style.width = percentage + "%";
+      progressTextEl.textContent = completed + " / " + TOTAL_TASKS;
+    }
+
+    function updateTask() {
+      const no = currentIndex + 1;
+      taskLabelEl.textContent = "No." + no + " のお世話";
+      taskTextEl.textContent = tasks[currentIndex];
+    }
+
+    function updateUI() {
+      const stage = getStage(currentIndex);
+      updateCharacterStage(stage);
+      updateProgress();
+      if (currentIndex < TOTAL_TASKS) {
+        updateTask();
+      }
+    }
+
+    function showEvolutionMessage(stage) {
+      if (stage === "larva") {
+        logLineEl.textContent = "１０個クリア！たまごが、不細工な幼虫になった…。";
+      } else if (stage === "pupa") {
+        logLineEl.textContent = "２０個クリア！幼虫が、見たことない形のさなぎになった…。";
+      } else if (stage === "weird") {
+        logLineEl.textContent = "１００個コンプリート！さなぎが、よくわからない変なキャラクターになった！";
+      } else {
+        logLineEl.textContent = "";
+      }
+    }
+
+    function showLastRatingMessage(score) {
+      if (score === 0) {
+        logLineEl.textContent = "「これはつまらない」とジャッジしました。";
+      } else if (score === 1) {
+        logLineEl.textContent = "「まあつまらない」とジャッジしました。";
+      } else if (score === 2) {
+        logLineEl.textContent = "「意外と好きかもしれない」とジャッジしました。";
+      }
+    }
+
+    function decideEndingType(count0, count1, count2) {
+      if (count0 >= 50 && count0 >= count2) {
+        return "strict";
+      } else if (count2 >= 50 && count2 > count0) {
+        return "fun";
+      } else {
+        return "balance";
+      }
+    }
+
+    function getEndingText(type) {
+      if (type === "strict") {
+        return {
+          title: "つまらなさ職人タイプ",
+          desc: "つまらないお世話を見つけて、きっちりジャッジする名人。生活のノイズを整えていく職人肌のキャラです。"
+        };
+      } else if (type === "fun") {
+        return {
+          title: "つまらない中に楽しみを見つけるタイプ",
+          desc: "一見つまらないお世話の中にも、ちょっとした楽しさや「ふふっ」を見つけてしまうキャラです。"
+        };
+      } else {
+        return {
+          title: "ほどよくつまらせるバランスタイプ",
+          desc: "つまらなさも楽しさも、どちらも大事にできる中庸スタイル。ほどよい生活リズムをつくる名人です。"
+        };
+      }
+    }
+
+    function applyEndingAppearance(type) {
+      characterEl.className = "weird";
+      characterEl.classList.add(
+        type === "strict"
+          ? "ending-strict"
+          : type === "fun"
+          ? "ending-fun"
+          : "ending-balance"
+      );
+      mouthEl.classList.add("weird-mouth");
+      stageLabelEl.textContent = getStageLabel("weird");
+    }
+
+    function showFinalResult() {
+      taskBoxEl.classList.add("hidden");
+      buttonsEl.classList.add("hidden");
+      resultEl.classList.remove("hidden");
+
+      let count0 = 0, count1 = 0, count2 = 0;
+      ratings.forEach(v => {
+        if (v === 0) count0++;
+        if (v === 1) count1++;
+        if (v === 2) count2++;
+      });
+
+      const endingType = decideEndingType(count0, count1, count2);
+      const endingInfo = getEndingText(endingType);
+      applyEndingAppearance(endingType);
+
+      resultEl.innerHTML =
+        "<p>１００個ぜんぶジャッジしました。</p>" +
+        "<p>つまらない度の内訳：</p>" +
+        "<ul style='padding-left:1.2em; margin-top:4px; margin-bottom:4px;'>" +
+        "<li>「これはつまらない」：" + count0 + " 個</li>" +
+        "<li>「まあつまらない」：" + count1 + " 個</li>" +
+        "<li>「意外と好きかもしれない」：" + count2 + " 個</li>" +
+        "</ul>" +
+        "<p><strong>あなたの変なキャラ診断：</strong></p>" +
+        "<p><strong>" + endingInfo.title + "</strong></p>" +
+        "<p>" + endingInfo.desc + "</p>" +
+        "<p>このキャラは、あなたのつまらないお世話ジャッジから生まれました。</p>" +
+        "<button class='restart-btn' id='restart-btn'>もう一度はじめから</button>";
+
+      const restartBtn = document.getElementById("restart-btn");
+      restartBtn.addEventListener("click", restartGame);
+    }
+
+    function restartGame() {
+      currentIndex = 0;
+      ratings.length = 0;
+      resultEl.classList.add("hidden");
+      taskBoxEl.classList.remove("hidden");
+      buttonsEl.classList.remove("hidden");
+      logLineEl.textContent = "";
+      characterEl.className = "egg";
+      mouthEl.classList.remove("weird-mouth");
+      stageLabelEl.textContent = getStageLabel("egg");
+      updateUI();
+    }
+
+    function handleRating(score) {
+      const completedBefore = currentIndex;
+      ratings[currentIndex] = score;
+      currentIndex++;
+
+      const completedAfter = currentIndex;
+      const oldStage = getStage(completedBefore);
+      const newStage = getStage(completedAfter);
+
+      updateUI();
+
+      if (completedAfter >= TOTAL_TASKS) {
+        showEvolutionMessage("weird");
+        showFinalResult();
+        return;
+      }
+
+      if (newStage !== oldStage) {
+        showEvolutionMessage(newStage);
+      } else {
+        showLastRatingMessage(score);
+      }
+    }
+
+    buttonsEl.querySelectorAll("button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const score = Number(btn.dataset.score);
+        handleRating(score);
+      });
+    });
+
+    updateUI();
+  </script>
 </body>
 </html>
