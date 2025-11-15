@@ -134,7 +134,7 @@
       font-weight: 700;
     }
 
-    /* つまらない度メーター */
+    /* メーター */
     .meter-bar {
       width: 100%;
       height: 18px;
@@ -163,7 +163,7 @@
       margin-top: 4px;
     }
 
-    /* キャラ成長 */
+    /* キャラ */
     .character-growth { text-align: center; }
 
     .character-area {
@@ -177,13 +177,17 @@
     .character-display { margin-top: 4px; }
 
     .character-sprite {
-      width: 96px;
-      height: 96px;
+      width: 120px;
+      height: 120px;
       margin: 4px auto;
-      background-image: url("public/chara/boring_chars.png");
       background-repeat: no-repeat;
-      background-size: 400% 300%; /* 4列×3行 */
+      background-size: 400% 300%; /* 4列×3行のスプライト */
       background-position: 0% 0%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      color: #5a3a2a;
     }
 
     .character-status {
@@ -221,7 +225,7 @@
       min-height: 2.1em;
     }
 
-    /* 下段：お世話部分 */
+    /* お世話部分 */
     .current-card { margin-top: 6px; }
 
     .game-title {
@@ -267,7 +271,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 6px;
+      margin: 8px 0 6px;
     }
 
     .btn {
@@ -510,7 +514,7 @@
         毎回、お世話の文章を読んで → ミニゲームで「なんとなくお世話」 → そのあとでつまらなさをジャッジします。
       </p>
       <p class="hint">
-        最後には、10体のつまらないキャラと、ラスボス「エンドレス家事メモりん」が登場します。
+        途中で、たまご → 変な幼虫 → へんなさなぎ → 生活のつまらないキャラたち → ラスボス「エンドレス家事メモりん」が登場します。
       </p>
     </header>
     <div class="start-body">
@@ -554,21 +558,21 @@
         <h2>🌱 成長するつまらないキャラ</h2>
         <div class="character-area">
           <div class="character-display">
-            <div id="characterSprite" class="character-sprite"></div>
+            <div id="characterSprite" class="character-sprite">🥚</div>
           </div>
-          <div class="character-status" id="characterStatus">つまらないキャラ：ほこりん</div>
+          <div class="character-status" id="characterStatus">？？？（まだ世界を知らないたまご）</div>
           <div class="progress-bar">
             <div class="progress-fill" id="growthProgress"></div>
           </div>
           <div class="growth-stage" id="growthStage">つまらないお世話：0 / 100</div>
           <div class="character-message" id="characterMessage">
-            つまらないお世話が増えるほど、10体のキャラが順番に出てきます。
+            まずは1回だけ「これはつまらない」とジャッジしてみると、最初の変な幼虫が生まれます。
           </div>
         </div>
       </div>
     </div>
 
-    <!-- お世話 -->
+    <!-- お世話部分 -->
     <div class="card current-card">
       <h3 class="game-title">
         <span id="taskLabel">No.1 のつまらないお世話</span>
@@ -623,31 +627,47 @@
   </div>
 
   <script>
-    const TOTAL_TASKS = 100;
+    // ===== 画像パス =====
+    // 10匹が1枚に入っているスプライト画像
     const SPRITE_IMAGE_URL = "public/chara/boring_chars.png";
+    // ラスボスだけ別画像
     const BOSS_IMAGE_URL   = "public/chara/endless_memorin.png";
 
-    // 進化キャラ
+    // スプライトは 4列×3行 で配置されている前提
+    function setSpriteByIndex(index) {
+      const cols = 4;
+      const rows = 3;
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      const xPercent = (cols === 1) ? 0 : (col / (cols - 1)) * 100;
+      const yPercent = (rows === 1) ? 0 : (row / (rows - 1)) * 100;
+      characterSpriteEl.style.backgroundImage = `url("${SPRITE_IMAGE_URL}")`;
+      characterSpriteEl.style.backgroundSize = "400% 300%";
+      characterSpriteEl.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+      characterSpriteEl.textContent = "";
+    }
+
+    // 進化テーブル（スプライトの index を指定）
     const evolutionCharacters = [
-      { threshold: 0,  name: "ほこりん",               spriteIndex: 0,
+      { threshold: 5,  name: "ほこりん",               spriteIndex: 0,
         msg: "ふわっと増えていく、終わらない掃除の象徴。" },
-      { threshold: 5,  name: "ぬれぞうきんさん",       spriteIndex: 1,
+      { threshold: 10, name: "ぬれぞうきんさん",       spriteIndex: 1,
         msg: "がんばっているのに、部屋のキレイさはあまり変わらない段階です。" },
-      { threshold: 10, name: "ちゃぷ電池（3％妖精）",  spriteIndex: 2,
+      { threshold: 15, name: "ちゃぷ電池（3％妖精）",  spriteIndex: 2,
         msg: "ちょっとだけ焦らせてくる、安心感と不安のあいだのつまらなさ。" },
-      { threshold: 15, name: "ポストくん",             spriteIndex: 3,
+      { threshold: 20, name: "ポストくん",             spriteIndex: 3,
         msg: "どれだけ期待してもチラシばかり出てくる、情報過多なつまらなさゾーン。" },
-      { threshold: 20, name: "いねむりスリッパ",       spriteIndex: 4,
+      { threshold: 25, name: "いねむりスリッパ",       spriteIndex: 4,
         msg: "そろえても外出イベントにはならない、「そろえること」そのものの世界。" },
-      { threshold: 25, name: "すべりこみカレンダーくん", spriteIndex: 5,
+      { threshold: 30, name: "すべりこみカレンダーくん", spriteIndex: 5,
         msg: "日付だけが淡々と進んでいく、時間系のつまらなさ。" },
-      { threshold: 30, name: "くもりメガネさん",       spriteIndex: 6,
+      { threshold: 35, name: "くもりメガネさん",       spriteIndex: 6,
         msg: "ふいてもふいても完璧にならない、「見えにくさ」と付き合う段階。" },
-      { threshold: 35, name: "タオルたん",             spriteIndex: 7,
+      { threshold: 40, name: "タオルたん",             spriteIndex: 7,
         msg: "半乾きとともに生きていく、「まあこんなものか」というつまらなさ。" },
-      { threshold: 40, name: "Wi-Fiさがしのおばけ",    spriteIndex: 8,
+      { threshold: 45, name: "Wi-Fiさがしのおばけ",    spriteIndex: 8,
         msg: "どこまで探しても「超高速！」にはならない、探し続けるつまらなさ。" },
-      { threshold: 45, name: "つみかさねレシートくん", spriteIndex: 9,
+      { threshold: 50, name: "つみかさねレシートくん", spriteIndex: 9,
         msg: "捨てるか残すか迷い続ける、生活ログ系つまらなさの最終形。" }
     ];
 
@@ -656,44 +676,146 @@
       msg:  "どれだけチェックしてもやることが減らない、「終わらない家事リスト」の化身です。"
     };
 
-    // つまらないお世話100個（そのまま）
-    const tasks = [/* ここはご質問の元コードと同じ100個の配列。長いので省略せず貼り付けてください */];
+    // ===== お世話データ（そのまま） =====
+    const tasks = [
+      "スマホの充電残量を毎朝チェックする（見ても充電は増えない）",
+      "観葉植物の葉っぱのほこりをふく（すぐにまた積もる）",
+      "使っていないアプリの通知をオフにする（誰も気づかない）",
+      "冷蔵庫の賞味期限シールをながめて確認する（見るだけで減らない）",
+      "リモコンをきれいに並べ直す（すぐ誰かがずらす）",
+      "ティッシュの箱を部屋ごとにそろえる（誰も感謝しない）",
+      "水筒のパッキンを毎回ちゃんとはめる（達成感はゼロ）",
+      "えんぴつを一本だけきれいにけずる（特に使われない）",
+      "いらないレシートを一枚だけ捨てる（財布はまだパンパン）",
+      "カバンの中のごみを一個だけ捨てる（劇的には変わらない）",
+      "机の上のものを右から左へ並べ替える（意味はあまりない）",
+      "カーテンのしわを手でのばす（またしわが寄る）",
+      "ゴミ箱のビニール袋をぴしっと広げる（誰も見ていない）",
+      "コンセントまわりのほこりをちょっとだけ取る（世界はあまり変わらない）",
+      "ハンカチをきれいに四つ折りにたたむ（すぐポケットの中でぐちゃぐちゃ）",
+      "リップクリームのふたをそっと閉める（音が静かなだけ）",
+      "消しゴムのカスを集めて丸める（丸めたカスはすぐ捨てられる）",
+      "ペン立てのペンを色順にならべる（誰も気づかないグラデーション）",
+      "毎朝、時計を一回だけ見て「ふーん」と思う（特に何も変わらない）",
+      "カレンダーの日付に小さく〇をつける（つけても予定は増えない）",
+      "マグカップの取っ手の向きをそろえる（使うとすぐバラバラ）",
+      "イスを机にきちんとしまう（またすぐ出される）",
+      "靴を玄関でつま先そろえて並べる（すぐに誰かが崩す）",
+      "ブランケットの向きをきれいに直す（寝たらまたずれる）",
+      "リュックのチャックを全部しめる確認をする（誰も見ていない安全確認）",
+      "テレビの音量をいつもの数字に戻す（こだわりは自分だけ）",
+      "部屋のスイッチを全部オフか確認する（オンにするのも自分）",
+      "えんぴつの芯の長さをそろえようとしてみる（完璧にはそろわない）",
+      "ノートの角をきちんと合わせてそろえる（またすぐずれる）",
+      "メガネ拭きでメガネを一拭きだけする（世界の見え方はあまり変わらない）",
+      "テーブルの上を手のひらでさっとなでてゴミを集める（集めてもすぐ落ちる）",
+      "プリントの端をそろえてトントンする（自己満足の整列）",
+      "ポケットに何も入っていないか確認する（ほぼ毎回何も入っていない）",
+      "マスクの予備を一枚だけカバンに入れておく（使われないままくしゃくしゃ）",
+      "スマホ画面の指紋をちょっとだけふく（すぐまたつく）",
+      "お気に入りサイトのタブを閉じずに並べ直す（結局全部見るわけではない）",
+      "充電ケーブルをくるっと巻いておきなおす（次に使うときまたほどく）",
+      "鍵の位置を毎回同じ場所に戻す（それでもたまに見失う）",
+      "同じペンで今日の日付だけ書いてみる（誰もそのこだわりに気づかない）",
+      "ごみの日かどうかだけカレンダーで確認する（確認しても出し忘れる時がある）",
+      "使っていないノートの一枚目だけめくって戻す（特に意味はない）",
+      "プリントのクリアファイルを色ごとに分けてみる（使うときは結局全部開ける）",
+      "洗面台の水しぶきを指でなでて消す（数分後にはまた水しぶき）",
+      "イスの高さをちょっとだけ調整する（違いはほとんど分からない）",
+      "スリッパをそろえてスタートラインを作る（誰もそのラインを意識しない）",
+      "ティッシュを一枚だけ予備でポケットに入れる（存在を忘れられる）",
+      "お気に入りのシャーペンだけ芯を補充する（今日は別のペンを使う）",
+      "机の角とノートの角をぴったり合わせて置く（すぐずれる）",
+      "部屋の時計とスマホの時間を見比べる（ほぼ同じことを確認するだけ）",
+      "SNSの通知マークを全部消してゼロにする（すぐにまた1件つく）",
+      "冷蔵庫の中のペットボトルの向きをそろえる（誰も気にしない整列）",
+      "ペンのキャップがちゃんとはまっているか確認する（はまっていても安心感だけ）",
+      "えんぴつの名前シールがはがれてないか見る（見ても特に何もしない）",
+      "プリントの穴あけ位置を揃えてながめる（見た目がちょっと気持ちいいだけ）",
+      "洗濯物のハンガーの向きをそろえる（風が吹いたら終わり）",
+      "今日使わない文房具をペンケースから一個出しておく（たぶん明日も使わない）",
+      "お気に入りのスタンプを一つだけ押して満足する（誰もその1個に気づかない）",
+      "スマホのホーム画面のアイコンを一個だけ移動する（配置はほとんど変わらない）",
+      "教科書に付箋を一枚だけ貼りかえる（たぶんそこも読まない）",
+      "カーテンの開き具合を左右対称にととのえる（誰も参加しないシンメトリー）",
+      "椅子の下に何も落ちていないかのぞきこむ（見つけても拾うのは自分）",
+      "えんぴつの長さ順に並べてニヤッとする（すぐに順番がぐちゃぐちゃ）",
+      "ペットボトルのラベルをまっすぐに戻す（またすぐずれる）",
+      "カバンの中でペンケースの位置を決める（揺れると元どおり）",
+      "上着のファスナーを一番上まで上げてみる（すぐ下ろす）",
+      "机の引き出しを一回だけ開けて何もせず閉める（安心感だけ増える）",
+      "お気に入り消しゴムの角を一つだけ使ってみる（誰もその角の変化に気づかない）",
+      "水道のレバーをまっすぐな角度にそろえる（次の人がすぐ動かす）",
+      "トイレットペーパーの先端を三角に折る（芸術点だけが上がる）",
+      "メモ帳の表紙をなでてからカバンに入れる（なでられたことは忘れられる）",
+      "リモコンの向きをテレビにぴったり揃えて置く（使えばすぐズレる）",
+      "つめきりを決まった場所に戻すだけの仕事（誰も気づかない秩序）",
+      "USBメモリのキャップをなくしてないか確認する（なくしてからでは遅い）",
+      "カギ束のキーホルダーの向きを整える（本人以外は見ていない）",
+      "今日使わないカードを財布の奥にしまいなおす（また別の日に迷う）",
+      "鏡の前で前髪を一回だけ直す（外に出たら風で終わり）",
+      "椅子の足を全部同じ線の上にそろえる（誰もそのラインに気づかない）",
+      "スマホの画面の明るさをいつもの明るさに調整する（微妙な差）",
+      "使いかけのノートのしおりをきれいに差しなおす（次開くまで誰も知らない）",
+      "机の上の本のタイトルが読める向きにそろえる（誰も読まないかもしれない）",
+      "タオルをくるっと巻いて同じ高さにそろえる（すぐ使って崩れる）",
+      "カーテンのタッセルをきれいな位置に直す（ちょっとだけ満足）",
+      "ごみ袋の口をきゅっと結び直すだけ（結び直しても中身は同じ）",
+      "洗面台のコップをまっすぐの向きに置く（すぐ誰かが回す）",
+      "ハンドクリームを手の甲に一回だけ塗る（世界はあまり変わらない）",
+      "使い終わったイスを元の場所にぴったり戻す（またすぐ動かされる）",
+      "机の下の足元マットの向きを直す（動くたびにずれる）",
+      "充電器のコンセントを根元までしっかり差しこむ（もともと刺さっていることが多い）",
+      "ホワイトボードのペンを色順に置き直す（授業で順番は崩れる）",
+      "今日のプリントを一枚だけファイルにしまう（その1枚だけ妙に丁寧）",
+      "教科書の角が折れていたらそっとのばす（またすぐ折れる）",
+      "使い終わったお皿をシンクの端にきれいに重ねる（洗うのはまだ先）",
+      "ペットボトルのキャップを集めて同じ場所に入れる（特に使い道は決まっていない）",
+      "折りたたみ傘のヒモをちゃんと巻き直す（次に使うとき急いでほどく）",
+      "ポケットティッシュの残り枚数をなんとなく確認する（確認しても増えない）",
+      "イスの背もたれにかけた上着のしわをのばす（座ったらまたしわ）",
+      "机の上の充電コードを一本だけほどいて整える（すぐ絡まる）",
+      "電気を消す前に部屋を一回見回す（特に変化はない）",
+      "寝る前に枕の位置をちょっとだけ中央に直す（寝返りですぐズレる）",
+      "「今日もなんか世話したな」と小さく思いながら寝る（誰も知らない満足感）"
+    ];
+    const TOTAL_TASKS = tasks.length;
 
-    // DOM
-    const startScreenEl = document.getElementById('startScreen');
+    // ===== DOM =====
+    const startScreenEl   = document.getElementById('startScreen');
     const gameContainerEl = document.getElementById('gameContainer');
-    const startButtonEl = document.getElementById('startButton');
+    const startButtonEl   = document.getElementById('startButton');
 
-    const boredomFillEl = document.getElementById('boredomFill');
-    const boredomLevelEl = document.getElementById('boredomLevel');
-    const boredomSubEl = document.getElementById('boredomSub');
-    const boredomBreakdownEl = document.getElementById('boredomBreakdown');
+    const boredomFillEl       = document.getElementById('boredomFill');
+    const boredomLevelEl      = document.getElementById('boredomLevel');
+    const boredomSubEl        = document.getElementById('boredomSub');
+    const boredomBreakdownEl  = document.getElementById('boredomBreakdown');
 
-    const characterSpriteEl = document.getElementById('characterSprite');
-    const characterStatusEl = document.getElementById('characterStatus');
-    const characterMessageEl = document.getElementById('characterMessage');
-    const growthProgressEl = document.getElementById('growthProgress');
-    const growthStageEl = document.getElementById('growthStage');
+    const characterSpriteEl   = document.getElementById('characterSprite');
+    const characterStatusEl   = document.getElementById('characterStatus');
+    const characterMessageEl  = document.getElementById('characterMessage');
+    const growthProgressEl    = document.getElementById('growthProgress');
+    const growthStageEl       = document.getElementById('growthStage');
 
-    const taskLabelEl = document.getElementById('taskLabel');
-    const taskStageLabelEl = document.getElementById('taskStageLabel');
-    const taskTextEl = document.getElementById('taskText');
-    const taskHintEl = document.getElementById('taskHint');
+    const taskLabelEl     = document.getElementById('taskLabel');
+    const taskStageLabelEl= document.getElementById('taskStageLabel');
+    const taskTextEl      = document.getElementById('taskText');
+    const taskHintEl      = document.getElementById('taskHint');
     const ratingButtonsEl = document.getElementById('ratingButtons');
-    const logMessageEl = document.getElementById('logMessage');
-    const resultBoxEl = document.getElementById('resultBox');
-    const openMiniBtn = document.getElementById('openMiniBtn');
+    const logMessageEl    = document.getElementById('logMessage');
+    const resultBoxEl     = document.getElementById('resultBox');
+    const openMiniBtn     = document.getElementById('openMiniBtn');
 
-    const miniModalEl = document.getElementById('miniModal');
+    const miniModalEl   = document.getElementById('miniModal');
     const miniCaptionEl = document.getElementById('miniCaption');
-    const miniAreaEl = document.getElementById('miniArea');
+    const miniAreaEl    = document.getElementById('miniArea');
     const miniCatcherEl = document.getElementById('miniCatcher');
-    const miniTimerEl = document.getElementById('miniTimer');
+    const miniTimerEl   = document.getElementById('miniTimer');
     const miniCounterEl = document.getElementById('miniCounter');
-    const miniStartBtn = document.getElementById('miniStartBtn');
-    const miniOkBtn = document.getElementById('miniOkBtn');
+    const miniStartBtn  = document.getElementById('miniStartBtn');
+    const miniOkBtn     = document.getElementById('miniOkBtn');
 
-    // 状態
+    // ===== 状態 =====
     let currentIndex = 0;
     const ratings = [];
     let miniPlayedForThisTask = false;
@@ -703,15 +825,15 @@
     let miniStartTime = 0;
     const miniDuration = 5000;
     let miniTimerInterval = null;
-    let miniGameInterval = null;
+    let miniGameInterval  = null;
     let miniItems = [];
     let miniCaught = 0;
     let catcherX = 0;
 
-    let miniGameType = 'fall';      // 'fall' | 'arrange' | 'clean'
-    let currentMiniKind = 'normal'; // 'normal' | 'poop' | 'water'
+    let miniGameType   = 'fall';   // 'fall' | 'arrange' | 'clean'
+    let currentMiniKind= 'normal'; // 'normal' | 'poop' | 'water'
 
-    // ヘルパー
+    // ===== ヘルパー =====
     function countRatings() {
       let count0 = 0, count1 = 0, count2 = 0;
       ratings.forEach(r => {
@@ -722,20 +844,6 @@
       return { count0, count1, count2 };
     }
 
-    function setSpriteByIndex(index) {
-      const cols = 4;
-      const rows = 3;
-      const col = index % cols;
-      const row = Math.floor(index / cols);
-
-      characterSpriteEl.style.backgroundImage = `url("${SPRITE_IMAGE_URL}")`;
-      characterSpriteEl.style.backgroundSize = "400% 300%";
-
-      const x = (cols === 1) ? 0 : (col / (cols - 1)) * 100;
-      const y = (rows === 1) ? 0 : (row / (rows - 1)) * 100;
-      characterSpriteEl.style.backgroundPosition = `${x}% ${y}%`;
-    }
-
     function updateCharacter() {
       const n = currentIndex;
       const { count0 } = countRatings();
@@ -744,21 +852,53 @@
       growthProgressEl.style.width = percent + '%';
       growthStageEl.textContent = `つまらないお世話：${Math.min(n, TOTAL_TASKS)} / ${TOTAL_TASKS}`;
 
+      // すべて終わったらラスボス
       if (n >= TOTAL_TASKS) {
         characterSpriteEl.style.backgroundImage = `url("${BOSS_IMAGE_URL}")`;
-        characterSpriteEl.style.backgroundSize = "contain";
+        characterSpriteEl.style.backgroundSize  = "contain";
         characterSpriteEl.style.backgroundPosition = "center";
+        characterSpriteEl.textContent = "";
         characterStatusEl.textContent = `ラスボス：${bossCharacter.name}`;
         characterMessageEl.textContent =
           bossCharacter.msg + "　今日も「やることリスト」は静かにページを増やしていきます。";
         return;
       }
 
+      // まだ「これはつまらない」が1回も出ていない → 卵
+      if (count0 === 0) {
+        characterSpriteEl.style.backgroundImage = "none";
+        characterSpriteEl.textContent = "🥚";
+        characterStatusEl.textContent = "？？？（まだ世界を知らないたまご）";
+        characterMessageEl.textContent =
+          "まずは1回だけ「これはつまらない」とジャッジしてみると、最初の変な幼虫が生まれます。";
+        return;
+      }
+
+      // 1〜2回 → 変な幼虫
+      if (count0 > 0 && count0 < 3) {
+        characterSpriteEl.style.backgroundImage = "none";
+        characterSpriteEl.textContent = "🪱";
+        characterStatusEl.textContent = "変な幼虫（つまらなさを食べて育つ）";
+        characterMessageEl.textContent =
+          `いままでに「これはつまらない」とジャッジした回数：${count0} 回。そろそろさなぎになる準備をしています。`;
+        return;
+      }
+
+      // 3〜4回 → へんなさなぎ
+      if (count0 >= 3 && count0 < 5) {
+        characterSpriteEl.style.backgroundImage = "none";
+        characterSpriteEl.textContent = "🫧";
+        characterStatusEl.textContent = "へんなさなぎ（つまらないエネルギーをため込み中）";
+        characterMessageEl.textContent =
+          `「これはつまらない」が ${count0} 回分たまってきました。あと少しで生活感のあるキャラとして孵化します。`;
+        return;
+      }
+
+      // 5回以上 → 10キャラのどれか
       let stage = evolutionCharacters[0];
       for (const s of evolutionCharacters) {
         if (count0 >= s.threshold) stage = s;
       }
-
       setSpriteByIndex(stage.spriteIndex);
       characterStatusEl.textContent = `つまらないキャラ：${stage.name}`;
       characterMessageEl.textContent =
@@ -773,7 +913,8 @@
         taskStageLabelEl.textContent = `${TOTAL_TASKS} / ${TOTAL_TASKS}`;
         taskTextEl.textContent =
           "ここから先は、エンドレス家事メモりんが静かにあなたの「やることリスト」を見守ります。";
-        taskHintEl.textContent = "下の結果ボックスで、今日のつまらないお世話の内訳を眺めてみてください。";
+        taskHintEl.textContent =
+          "下の結果ボックスで、今日のつまらないお世話の内訳を眺めてみてください。";
         openMiniBtn.style.display = 'none';
         return;
       }
@@ -810,14 +951,14 @@
       boredomFillEl.style.width = level + '%';
 
       let label = '';
-      if (level < 20)      label = `${level}% - まだ楽しいかもしれません`;
+      if      (level < 20) label = `${level}% - まだ楽しいかもしれません`;
       else if (level < 40) label = `${level}% - ちょっとつまらない世界`;
       else if (level < 60) label = `${level}% - だいぶつまらない日常`;
       else if (level < 80) label = `${level}% - かなり報われないゾーン`;
       else                 label = `${level}% - 絶望的につまらない（いい意味で）`;
 
       boredomLevelEl.textContent = label;
-      boredomSubEl.textContent = `これまでに ${ratings.length} 個のお世話をジャッジしました。`;
+      boredomSubEl.textContent   = `これまでに ${ratings.length} 個のお世話をジャッジしました。`;
 
       const { count0, count1, count2 } = countRatings();
       boredomBreakdownEl.textContent =
@@ -855,7 +996,7 @@
       document.getElementById('restartBtn').addEventListener('click', initGame);
     }
 
-    // ジャッジ
+    // ===== ジャッジ処理 =====
     function handleRating(score) {
       if (!miniPlayedForThisTask) {
         logMessageEl.textContent = 'まずはミニお世話ゲームで、5秒だけ操作してみてください。';
@@ -886,12 +1027,11 @@
       setButtonsEnabled(false);
     }
 
-    // ミニゲーム共通リセット
+    // ===== ミニゲーム共通 =====
     function stopMiniGame() {
       miniPlaying = false;
       if (miniTimerInterval) { clearInterval(miniTimerInterval); miniTimerInterval = null; }
       if (miniGameInterval)  { clearInterval(miniGameInterval);  miniGameInterval  = null; }
-
       miniItems.forEach(obj => {
         if (obj.el && obj.el.parentNode === miniAreaEl) miniAreaEl.removeChild(obj.el);
       });
@@ -959,7 +1099,6 @@
       miniStartBtn.classList.remove('hidden');
       miniOkBtn.classList.add('hidden');
 
-      // 中身をリセット
       while (miniAreaEl.firstChild) {
         miniAreaEl.removeChild(miniAreaEl.firstChild);
       }
@@ -1010,7 +1149,6 @@
       const catcherWidth = 40;
       const catcherY = areaRect.height - 6 - 10;
 
-      // ランダムに落ちてくる
       if (Math.random() < 0.12) {
         const itemEl = document.createElement('div');
         itemEl.className = 'mini-item';
@@ -1125,7 +1263,7 @@
       resetMiniGameView();
     }
 
-    // イベント
+    // ===== イベント =====
     miniAreaEl.addEventListener('mousemove', onMiniPointerMove);
     miniAreaEl.addEventListener('touchmove', e => {
       onMiniPointerMove(e);
@@ -1152,7 +1290,6 @@
 
     openMiniBtn.addEventListener('click', openMiniForCurrentTask);
 
-    // 初期化
     function initGame() {
       currentIndex = 0;
       ratings.length = 0;
@@ -1174,7 +1311,7 @@
 
     startButtonEl.addEventListener('click', startGame);
 
-    // Element SDK
+    // ===== Element SDK =====
     const defaultConfig = {
       main_title: "🥚 つまらないお世話ゲーム",
       subtitle: "報われないお世話を100個こなすと、変なキャラが生まれます。"
@@ -1184,7 +1321,7 @@
       document.getElementById('mainTitle').textContent =
         config.main_title || defaultConfig.main_title;
       document.getElementById('subtitle').textContent =
-        config.subtitle || defaultConfig.subtitle;
+        config.subtitle   || defaultConfig.subtitle;
       document.getElementById('startMainTitle').textContent =
         config.main_title || defaultConfig.main_title;
     }
