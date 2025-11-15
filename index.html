@@ -29,6 +29,8 @@
       border-radius: 24px;
       padding: 24px 20px 22px;
       box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+      position: relative;
+      z-index: 1;
     }
 
     .header {
@@ -317,7 +319,7 @@
       opacity: 0.8;
     }
 
-    /* ミニゲームモーダル（上から落ちてくるものを取る） */
+    /* ミニゲームモーダル（💩や💧が落ちてくる） */
     .analysis-modal {
       position: fixed;
       top: 0;
@@ -370,11 +372,14 @@
 
     .mini-item {
       position: absolute;
-      width: 14px;
-      height: 14px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: #ffb7cf;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      pointer-events: none;
     }
 
     #miniCatcher {
@@ -429,6 +434,95 @@
     .hidden {
       display: none;
     }
+
+    /* スタート画面（最初のページ） */
+    .start-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 247, 233, 0.96);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1200;
+      padding: 16px;
+    }
+
+    .start-card {
+      max-width: 520px;
+      width: 100%;
+      background: #fffaf2;
+      border-radius: 22px;
+      padding: 20px 18px 18px;
+      border: 2px solid #f0d2aa;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+    }
+
+    .start-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #7b3a2e;
+      margin: 0 0 8px;
+      text-align: center;
+    }
+
+    .start-sub {
+      font-size: 0.9rem;
+      color: #a06340;
+      margin: 0 0 10px;
+      text-align: center;
+    }
+
+    .start-text {
+      font-size: 0.8rem;
+      color: #7b4a27;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .start-list {
+      font-size: 0.78rem;
+      color: #7b4a27;
+      margin: 0 0 10px 1.2em;
+      padding: 0;
+    }
+
+    .start-list li {
+      margin-bottom: 2px;
+    }
+
+    .start-hint {
+      font-size: 0.76rem;
+      color: #b07a52;
+      margin-bottom: 10px;
+    }
+
+    .start-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      background: #ffb9d2;
+      color: #5a2830;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+      margin: 0 auto;
+      display: block;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+    }
+
+    .start-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -455,6 +549,9 @@
           </div>
           <div class="meter-sub" id="boredomSub">
             ジャッジが増えるほど、このメーターがじわじわ動きます。
+          </div>
+          <div class="meter-sub" id="boredomDetail">
+            まだ「これはつまらない／まあつまらない／意外と好き」が記録されていません。
           </div>
         </div>
       </div>
@@ -506,16 +603,38 @@
     </div>
 
     <footer>
-      100個ぜんぶジャッジすると、変なキャラクターと「つまらないお世話の内訳」が表示されます。
+      100個ぜんぶジャッジすると、「つまらないお世話の内訳」と変なキャラクターの最終形が表示されます。
     </footer>
   </div>
 
-  <!-- ミニお世話ゲーム（5秒だけの落ちものゲーム） -->
+  <!-- 最初のページ（スタート画面） -->
+  <div class="start-overlay" id="startOverlay">
+    <div class="start-card">
+      <h2 class="start-title">つまらないお世話ゲーム</h2>
+      <p class="start-sub">報われないお世話を100個こなして、よく分からないキャラを育てます。</p>
+      <p class="start-text">
+        このゲームでは、日常の「どうでもいいお世話」を100個体験して、<br>
+        そのつまらなさを自分でジャッジしていきます。
+      </p>
+      <ul class="start-list">
+        <li>1つ目のお世話から順番に表示されます。</li>
+        <li>毎回5秒だけ、💩や💧が落ちてくるミニゲームをします。</li>
+        <li>その後、「つまらない度」を3段階でジャッジします。</li>
+        <li>選んだジャッジの内訳に応じて、キャラが10段階くらいで変化します。</li>
+      </ul>
+      <p class="start-hint">
+        「つまらない」をちゃんと眺めると、案外おもしろいかもしれません。
+      </p>
+      <button class="start-btn" id="startGameBtn">ゲームをはじめる</button>
+    </div>
+  </div>
+
+  <!-- ミニお世話ゲーム（5秒だけの💩／💧落ちものゲーム） -->
   <div class="analysis-modal" id="miniModal">
     <div class="analysis-content">
       <h2 class="analysis-title">ミニお世話ゲーム</h2>
       <p class="mini-caption" id="miniCaption">
-        今回の「つまらないお世話」を、なぜか落ちてくる丸を拾うゲームで表現しています。（あまり意味はありません）
+        今回の「つまらないお世話」を、なぜか落ちてくる何かを拾うゲームで表現しています。（あまり意味はありません）
       </p>
       <div class="mini-area" id="miniArea">
         <div id="miniCatcher"></div>
@@ -648,6 +767,7 @@
     const boredomFillEl = document.getElementById('boredomFill');
     const boredomLevelEl = document.getElementById('boredomLevel');
     const boredomSubEl = document.getElementById('boredomSub');
+    const boredomDetailEl = document.getElementById('boredomDetail');
 
     const characterEl = document.getElementById('growthCharacter');
     const characterStatusEl = document.getElementById('characterStatus');
@@ -672,6 +792,9 @@
     const miniStartBtn = document.getElementById('miniStartBtn');
     const miniOkBtn = document.getElementById('miniOkBtn');
 
+    const startOverlayEl = document.getElementById('startOverlay');
+    const startGameBtn = document.getElementById('startGameBtn');
+
     // =====================
     // 状態
     // =====================
@@ -688,12 +811,44 @@
     let miniItems = [];
     let miniCaught = 0;
     let catcherX = 0;
+    let miniSymbolMode = 'random'; // 'poop' | 'drop' | 'random'
+
+    // つまらないキャラの段階（さなぎ以降・10段階）
+    const boringCharacterStages = [
+      { threshold: 0,  emoji: '🫧', status: 'なぞのさなぎ Lv.0', msg: 'まだつまらなさは控えめです。ここからどんなキャラになるでしょう。' },
+      { threshold: 3,  emoji: '😶', status: 'つまらなさ見習い', msg: '「これはつまらない」が少しずつ集まりはじめました。' },
+      { threshold: 6,  emoji: '😐', status: 'つまらなさ初心者', msg: '退屈なルーティンに、ちょっと慣れてきたようです。' },
+      { threshold: 10, emoji: '🥱', status: 'あくびをこらえる存在', msg: 'あくびが出そうなつまらなさが、いい感じにたまっています。' },
+      { threshold: 15, emoji: '😴', status: '半分寝ているキャラ', msg: 'つまらないお世話が子守唄になりつつあります。' },
+      { threshold: 20, emoji: '🫠', status: 'とけかけキャラ', msg: 'つまらなさに少しとけてきました。形があやしくなっています。' },
+      { threshold: 25, emoji: '👻', status: 'つまらない幽霊', msg: '存在感があるのかないのか、よく分からない状態です。' },
+      { threshold: 30, emoji: '🧟', status: 'つまらないゾンビ', msg: '同じお世話をくり返すことに、かなり慣れてきました。' },
+      { threshold: 40, emoji: '🤖', status: 'ルーティンロボ', msg: 'つまらない動きを自動化しはじめています。もう職人技です。' },
+      { threshold: 50, emoji: '👾', status: 'つまらなさの怪物', msg: 'つまらないお世話から生まれた、新種のキャラクターかもしれません。' }
+    ];
 
     // =====================
-    // 表示更新
+    // ユーティリティ
+    // =====================
+    function countRatings() {
+      let count0 = 0;
+      let count1 = 0;
+      let count2 = 0;
+      ratings.forEach(r => {
+        if (r === 0) count0++;
+        else if (r === 1) count1++;
+        else if (r === 2) count2++;
+      });
+      return { count0, count1, count2 };
+    }
+
+    // =====================
+    // キャラ表示更新
     // =====================
     function updateCharacter() {
-      const n = currentIndex;
+      const n = currentIndex; // ジャッジ済みのお世話数
+      const { count0 } = countRatings(); // 「これはつまらない」の回数
+
       let emoji = '🥚';
       let status = '卵（まだ世界を知らない）';
       let msg = 'つまらないお世話が10個たまると、不細工な幼虫になります。';
@@ -703,13 +858,27 @@
         status = '不細工な幼虫';
         msg = 'さらに10個で、見たことのない謎のさなぎになります。';
       } else if (n >= 20 && n < TOTAL_TASKS) {
-        emoji = '🫧';
-        status = 'なぞのさなぎ';
-        msg = '100個目のお世話で、変なキャラクターが生まれます。';
+        // さなぎ以降：つまらない（score 0）の回数に応じて10段階変化
+        let stage = boringCharacterStages[0];
+        for (const s of boringCharacterStages) {
+          if (count0 >= s.threshold) {
+            stage = s;
+          }
+        }
+        emoji = stage.emoji;
+        status = stage.status;
+        msg = stage.msg + '（まだ途中経過です）';
       } else if (n >= TOTAL_TASKS) {
-        emoji = '👾';
-        status = '変なキャラクター';
-        msg = 'もう十分お世話されました。ここからは観察ターンかもしれません。';
+        // 100個ジャッジ後：最終形
+        let stage = boringCharacterStages[boringCharacterStages.length - 1];
+        for (const s of boringCharacterStages) {
+          if (count0 >= s.threshold) {
+            stage = s;
+          }
+        }
+        emoji = stage.emoji;
+        status = '最終形：' + stage.status;
+        msg = stage.msg + ' 100個のお世話を終えたので、ここからは観察ターンかもしれません。';
       }
 
       characterEl.textContent = emoji;
@@ -721,6 +890,9 @@
       growthStageEl.textContent = `つまらないお世話：${Math.min(n, TOTAL_TASKS)} / ${TOTAL_TASKS}`;
     }
 
+    // =====================
+    // タスク表示
+    // =====================
     function updateTask() {
       const no = currentIndex + 1;
       taskLabelEl.textContent = `No.${no} のつまらないお世話`;
@@ -731,11 +903,18 @@
       logMessageEl.textContent = '';
     }
 
+    // =====================
+    // つまらない度メーター
+    // =====================
     function updateBoredomMeter() {
+      const { count0, count1, count2 } = countRatings();
+
       if (ratings.length === 0) {
         boredomFillEl.style.width = '0%';
         boredomLevelEl.textContent = '0% - まだ計測されていません';
         boredomSubEl.textContent = 'ジャッジが増えるほど、このメーターがじわじわ動きます。';
+        boredomDetailEl.textContent =
+          'まだ「これはつまらない／まあつまらない／意外と好き」が記録されていません。';
         return;
       }
 
@@ -758,6 +937,8 @@
 
       boredomLevelEl.textContent = label;
       boredomSubEl.textContent = `これまでに ${ratings.length} 個のお世話をジャッジしました。`;
+      boredomDetailEl.textContent =
+        `これまでの内訳：これはつまらない ${count0} 回 / まあつまらない ${count1} 回 / 意外と好きかも ${count2} 回`;
     }
 
     function setButtonsEnabled(enabled) {
@@ -782,16 +963,8 @@
     }
 
     function showFinalSummary() {
-      const count0 = ratings.filter(r => r === 0).length;
-      const count1 = ratings.filter(r => r === 1).length;
-      const count2 = ratings.filter(r => r === 2).length;
-
+      const { count0, count1, count2 } = countRatings();
       resultBoxEl.style.display = 'block';
-
-      const summaryText =
-        `「これはつまらない」: ${count0} 個\n` +
-        `「まあつまらない」: ${count1} 個\n` +
-        `「意外と好きかもしれない」: ${count2} 個\n`;
 
       resultBoxEl.innerHTML =
         `<p>100個すべてジャッジしました。</p>
@@ -853,7 +1026,7 @@
     }
 
     // =====================
-    // ミニゲーム関連
+    // ミニゲーム関連（💩と💧）
     // =====================
     function resetMiniGameView() {
       miniPlaying = false;
@@ -868,7 +1041,7 @@
       miniTimerEl.textContent = '5.0';
       miniCounterEl.textContent = 'とれた数：0';
       miniCaptionEl.textContent =
-        '今回の「つまらないお世話」を、なぜか落ちてくる丸を拾うゲームで表現しています。（あまり意味はありません）';
+        '今回の「つまらないお世話」を、なぜか落ちてくる何かを拾うゲームで表現しています。（あまり意味はありません）';
       miniStartBtn.disabled = false;
       miniStartBtn.classList.remove('hidden');
       miniOkBtn.classList.add('hidden');
@@ -925,28 +1098,61 @@
         'ミニゲーム終了。たくさん取れても取れなくても、現実世界はあまり変わりません。';
     }
 
+    function decideMiniSymbolModeForTask() {
+      const no = currentIndex + 1;
+      // 18の倍数回は💩メイン、27の倍数回は💧メイン、それ以外はランダム
+      if (no % 18 === 0 && no % 27 === 0) {
+        miniSymbolMode = 'random';
+      } else if (no % 18 === 0) {
+        miniSymbolMode = 'poop';
+      } else if (no % 27 === 0) {
+        miniSymbolMode = 'drop';
+      } else {
+        miniSymbolMode = 'random';
+      }
+    }
+
+    function createMiniItem(areaRect) {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'mini-item';
+
+      let symbol;
+      if (miniSymbolMode === 'poop') {
+        symbol = '💩';
+      } else if (miniSymbolMode === 'drop') {
+        symbol = '💧';
+      } else {
+        symbol = Math.random() < 0.5 ? '💩' : '💧';
+      }
+
+      itemEl.textContent = symbol;
+
+      const itemSize = 24;
+      const x = Math.random() * (areaRect.width - itemSize) + itemSize / 2;
+      const y = -itemSize;
+
+      itemEl.style.left = (x - itemSize / 2) + 'px';
+      itemEl.style.top = y + 'px';
+
+      miniAreaEl.appendChild(itemEl);
+      miniItems.push({ x, y, el: itemEl });
+    }
+
     function updateMiniGame() {
       const areaRect = miniAreaEl.getBoundingClientRect();
       const catcherWidth = 40;
       const catcherY = areaRect.height - 6 - 10;
 
-      // ランダムに丸が落ちてくる
+      // ランダムに💩や💧が落ちてくる
       if (Math.random() < 0.12) {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'mini-item';
-        const x = Math.random() * (areaRect.width - 14) + 7;
-        const y = -14;
-        itemEl.style.left = (x - 7) + 'px';
-        itemEl.style.top = y + 'px';
-        miniAreaEl.appendChild(itemEl);
-        miniItems.push({ x, y, el: itemEl });
+        createMiniItem(areaRect);
       }
 
       const speed = 3;
       const newItems = [];
       miniItems.forEach(obj => {
         obj.y += speed;
-        if (obj.y > areaRect.height + 20) {
+        if (obj.y > areaRect.height + 30) {
           if (obj.el.parentNode === miniAreaEl) {
             miniAreaEl.removeChild(obj.el);
           }
@@ -954,7 +1160,7 @@
         }
 
         const dx = obj.x - catcherX;
-        if (obj.y >= catcherY - 10 && Math.abs(dx) < catcherWidth / 2 + 4) {
+        if (obj.y >= catcherY - 18 && Math.abs(dx) < catcherWidth / 2 + 6) {
           miniCaught += 1;
           miniCounterEl.textContent = 'とれた数：' + miniCaught;
           if (obj.el.parentNode === miniAreaEl) {
@@ -984,7 +1190,8 @@
     function openMiniForCurrentTask() {
       miniModalEl.style.display = 'flex';
       miniCaptionEl.textContent =
-        `「${tasks[currentIndex].split('（')[0]}」を、なぜか落ちものゲームで再現しています。（あまり関係はありません）`;
+        `「${tasks[currentIndex].split('（')[0]}」を、なぜか💩と💧の落ちものゲームで再現しています。（あまり関係はありません）`;
+      decideMiniSymbolModeForTask();
       resetMiniGameView();
     }
 
@@ -1013,7 +1220,9 @@
       });
     });
 
-    // 初期表示
+    // =====================
+    // 初期化とスタート画面
+    // =====================
     function initGame() {
       currentIndex = 0;
       ratings.length = 0;
@@ -1022,10 +1231,20 @@
       updateCharacter();
       updateTask();
       updateBoredomMeter();
-      openMiniForCurrentTask();
     }
 
-    initGame();
+    // ページ読み込み時：状態だけセット（ミニゲームはまだ開かない）
+    window.addEventListener('load', () => {
+      initGame();
+    });
+
+    // スタート画面のボタン
+    startGameBtn.addEventListener('click', () => {
+      startOverlayEl.style.display = 'none';
+      // 新しいゲームをスタート
+      initGame();
+      openMiniForCurrentTask();
+    });
 
     // =====================
     // Element SDK（タイトルとサブタイトルのカスタム用）
