@@ -177,11 +177,11 @@
     .character-display { margin-top: 4px; }
 
     .character-sprite {
-      width: 140px;
-      height: 140px;
+      width: 192px;          /* 768px ÷ 4列 を想定 */
+      height: 256px;         /* 768px ÷ 3行 を想定 */
       margin: 4px auto;
       background-repeat: no-repeat;
-      background-size: 1024px 1024px; /* スプライト全体サイズ */
+      background-size: 768px 768px;  /* まとめ画像のサイズ */
       background-position: 0 0;
       display: flex;
       align-items: center;
@@ -190,26 +190,25 @@
       color: #5a3a2a;
     }
 
-    /* 10キャラが入った1枚画像 */
+    /* 10キャラが入った1枚画像（フォルダ名 char） */
     .sprite-sheet {
-      background-image: url("public/chara/boring_chars.png");
+      background-image: url("public/char/boring_chars.png");
     }
 
-    /* 4列×3行のスプライトを雑に等分して使う（1マス256px×約341px想定） */
+    /* 4列×3行で切り出し（1マス 192×256px） */
     /* 1行目 */
     .char-hokorin         { background-position:    0px     0px; }
-    .char-nurezoukin      { background-position: -256px     0px; }
-    .char-chap_denchi     { background-position: -512px     0px; }
-    .char-post_kun        { background-position: -768px     0px; }
+    .char-nurezoukin      { background-position: -192px     0px; }
+    .char-chap_denchi     { background-position: -384px     0px; }
+    .char-post_kun        { background-position: -576px     0px; }
     /* 2行目 */
-    .char-inemuri_slipper { background-position:    0px   -341px; }
-    .char-suberikomi_cal  { background-position: -256px   -341px; }
-    .char-kumori_megane   { background-position: -512px   -341px; }
-    .char-taoru_tan       { background-position: -768px   -341px; }
+    .char-inemuri_slipper { background-position:    0px  -256px; }
+    .char-suberikomi_cal  { background-position: -192px  -256px; }
+    .char-kumori_megane   { background-position: -384px  -256px; }
+    .char-taoru_tan       { background-position: -576px  -256px; }
     /* 3行目 */
-    .char-wifi_obake      { background-position:    0px   -682px; }
-    .char-tsumikasane_rec { background-position: -512px   -682px; }
-    /* （左下：Wi-Fiさがしのおばけ ／ 右下：つみかさねレシートくんを想定） */
+    .char-wifi_obake      { background-position:    0px  -512px; }
+    .char-tsumikasane_rec { background-position: -384px  -512px; }
 
     .character-status {
       font-size: 0.92rem;
@@ -648,10 +647,10 @@
   </div>
 
   <script>
-    // ラスボス画像
-    const BOSS_IMAGE_PATH = "public/chara/endless_memorin.png";
+    // ラスボス画像（char フォルダ）
+    const BOSS_IMAGE_PATH = "public/char/endless_memorin.png";
 
-    // 10キャラの進化テーブル（スプライト用クラス名で管理）
+    // 10キャラの進化テーブル
     const evolutionCharacters = [
       { threshold: 5,  name: "ほこりん",               className: "char-hokorin",
         msg: "ふわっと増えていく、終わらない掃除の象徴。「これはつまらない」とジャッジした回数に応じて、少しずつ存在感が増えます。" },
@@ -681,9 +680,7 @@
       msg:  "どれだけチェックしてもやることが減らない、「終わらない家事リスト」の化身です。"
     };
 
-    // =====================
-    // つまらないお世話100個（前のものをそのまま使用）
-    // =====================
+    // つまらないお世話100個（前と同じ）
     const tasks = [
       "スマホの充電残量を毎朝チェックする（見ても充電は増えない）",
       "観葉植物の葉っぱのほこりをふく（すぐにまた積もる）",
@@ -788,7 +785,7 @@
     ];
     const TOTAL_TASKS = tasks.length;
 
-    // ===== DOM =====
+    // DOM
     const startScreenEl   = document.getElementById('startScreen');
     const gameContainerEl = document.getElementById('gameContainer');
     const startButtonEl   = document.getElementById('startButton');
@@ -822,7 +819,7 @@
     const miniStartBtn  = document.getElementById('miniStartBtn');
     const miniOkBtn     = document.getElementById('miniOkBtn');
 
-    // ===== 状態 =====
+    // 状態
     let currentIndex = 0;
     const ratings = [];
     let miniPlayedForThisTask = false;
@@ -837,10 +834,9 @@
     let miniCaught = 0;
     let catcherX = 0;
 
-    let miniGameType   = 'fall';   // 'fall' | 'arrange' | 'clean'
-    let currentMiniKind= 'normal'; // 'normal' | 'poop' | 'water'
+    let miniGameType   = 'fall';
+    let currentMiniKind= 'normal';
 
-    // ===== ヘルパー =====
     function countRatings() {
       let count0 = 0, count1 = 0, count2 = 0;
       ratings.forEach(r => {
@@ -859,7 +855,7 @@
 
     function showSprite(className) {
       characterSpriteEl.className = 'character-sprite sprite-sheet ' + className;
-      characterSpriteEl.style.backgroundImage = ''; // CSSのsprite-sheetを使う
+      characterSpriteEl.style.backgroundImage = '';
       characterSpriteEl.textContent = '';
     }
 
@@ -867,6 +863,8 @@
       characterSpriteEl.className = 'character-sprite';
       characterSpriteEl.style.backgroundImage = `url("${bossCharacter.img}")`;
       characterSpriteEl.style.backgroundSize = 'contain';
+      characterSpriteEl.style.backgroundRepeat = 'no-repeat';
+      characterSpriteEl.style.backgroundPosition = 'center';
       characterSpriteEl.textContent = '';
     }
 
@@ -878,7 +876,6 @@
       growthProgressEl.style.width = percent + '%';
       growthStageEl.textContent = `つまらないお世話：${Math.min(n, TOTAL_TASKS)} / ${TOTAL_TASKS}`;
 
-      // すべて終わったらラスボス
       if (n >= TOTAL_TASKS) {
         showBoss();
         characterStatusEl.textContent = `ラスボス：${bossCharacter.name}`;
@@ -887,7 +884,6 @@
         return;
       }
 
-      // まだ「これはつまらない」が1回も出ていない → 卵
       if (count0 === 0) {
         showEmoji("🥚");
         characterStatusEl.textContent = "？？？（まだ世界を知らないたまご）";
@@ -896,7 +892,6 @@
         return;
       }
 
-      // 1〜2回 → 変な幼虫
       if (count0 > 0 && count0 < 3) {
         showEmoji("🪱");
         characterStatusEl.textContent = "変な幼虫（つまらなさを食べて育つ）";
@@ -905,7 +900,6 @@
         return;
       }
 
-      // 3〜4回 → へんなさなぎ
       if (count0 >= 3 && count0 < 5) {
         showEmoji("🫧");
         characterStatusEl.textContent = "へんなさなぎ（つまらないエネルギーをため込み中）";
@@ -914,7 +908,6 @@
         return;
       }
 
-      // 5回以上 → 10キャラから1体
       let stage = evolutionCharacters[0];
       for (const s of evolutionCharacters) {
         if (count0 >= s.threshold) stage = s;
@@ -1016,7 +1009,6 @@
       document.getElementById('restartBtn').addEventListener('click', initGame);
     }
 
-    // ===== ジャッジ処理 =====
     function handleRating(score) {
       if (!miniPlayedForThisTask) {
         logMessageEl.textContent = 'まずはミニお世話ゲームで、5秒だけ操作してみてください。';
@@ -1047,7 +1039,7 @@
       setButtonsEnabled(false);
     }
 
-    // ===== ミニゲーム共通 =====
+    // ミニゲーム共通
     function stopMiniGame() {
       miniPlaying = false;
       if (miniTimerInterval) { clearInterval(miniTimerInterval); miniTimerInterval = null; }
@@ -1230,7 +1222,6 @@
       miniCatcherEl.style.left = (catcherX - catcherWidth / 2) + 'px';
     }
 
-    // お世話内容 → ミニゲーム種類
     function chooseMiniGameType(taskText) {
       const t = taskText;
       if (/(そろえ|そろえる|揃え|並べ|並び替え|順に|ライン)/.test(t)) {
@@ -1283,7 +1274,6 @@
       resetMiniGameView();
     }
 
-    // ===== イベント =====
     miniAreaEl.addEventListener('mousemove', onMiniPointerMove);
     miniAreaEl.addEventListener('touchmove', e => {
       onMiniPointerMove(e);
@@ -1331,7 +1321,7 @@
 
     startButtonEl.addEventListener('click', startGame);
 
-    // ===== Element SDK =====
+    // Element SDK
     const defaultConfig = {
       main_title: "🥚 つまらないお世話ゲーム",
       subtitle: "報われないお世話を100個こなすと、変なキャラが生まれます。"
