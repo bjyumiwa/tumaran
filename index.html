@@ -163,7 +163,7 @@
       margin-top: 4px;
     }
 
-    /* キャラ */
+    /* キャラ表示（スプライト） */
     .character-growth { text-align: center; }
 
     .character-area {
@@ -177,18 +177,39 @@
     .character-display { margin-top: 4px; }
 
     .character-sprite {
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       margin: 4px auto;
       background-repeat: no-repeat;
-      background-size: 400% 300%; /* 4列×3行のスプライト */
-      background-position: 0% 0%;
+      background-size: 1024px 1024px; /* スプライト全体サイズ */
+      background-position: 0 0;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 64px;
       color: #5a3a2a;
     }
+
+    /* 10キャラが入った1枚画像 */
+    .sprite-sheet {
+      background-image: url("public/chara/boring_chars.png");
+    }
+
+    /* 4列×3行のスプライトを雑に等分して使う（1マス256px×約341px想定） */
+    /* 1行目 */
+    .char-hokorin         { background-position:    0px     0px; }
+    .char-nurezoukin      { background-position: -256px     0px; }
+    .char-chap_denchi     { background-position: -512px     0px; }
+    .char-post_kun        { background-position: -768px     0px; }
+    /* 2行目 */
+    .char-inemuri_slipper { background-position:    0px   -341px; }
+    .char-suberikomi_cal  { background-position: -256px   -341px; }
+    .char-kumori_megane   { background-position: -512px   -341px; }
+    .char-taoru_tan       { background-position: -768px   -341px; }
+    /* 3行目 */
+    .char-wifi_obake      { background-position:    0px   -682px; }
+    .char-tsumikasane_rec { background-position: -512px   -682px; }
+    /* （左下：Wi-Fiさがしのおばけ ／ 右下：つみかさねレシートくんを想定） */
 
     .character-status {
       font-size: 0.92rem;
@@ -627,56 +648,42 @@
   </div>
 
   <script>
-    // ===== 画像パス =====
-    // 10匹が1枚に入っているスプライト画像
-    const SPRITE_IMAGE_URL = "public/chara/boring_chars.png";
-    // ラスボスだけ別画像
-    const BOSS_IMAGE_URL   = "public/chara/endless_memorin.png";
+    // ラスボス画像
+    const BOSS_IMAGE_PATH = "public/chara/endless_memorin.png";
 
-    // スプライトは 4列×3行 で配置されている前提
-    function setSpriteByIndex(index) {
-      const cols = 4;
-      const rows = 3;
-      const col = index % cols;
-      const row = Math.floor(index / cols);
-      const xPercent = (cols === 1) ? 0 : (col / (cols - 1)) * 100;
-      const yPercent = (rows === 1) ? 0 : (row / (rows - 1)) * 100;
-      characterSpriteEl.style.backgroundImage = `url("${SPRITE_IMAGE_URL}")`;
-      characterSpriteEl.style.backgroundSize = "400% 300%";
-      characterSpriteEl.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
-      characterSpriteEl.textContent = "";
-    }
-
-    // 進化テーブル（スプライトの index を指定）
+    // 10キャラの進化テーブル（スプライト用クラス名で管理）
     const evolutionCharacters = [
-      { threshold: 5,  name: "ほこりん",               spriteIndex: 0,
-        msg: "ふわっと増えていく、終わらない掃除の象徴。" },
-      { threshold: 10, name: "ぬれぞうきんさん",       spriteIndex: 1,
+      { threshold: 5,  name: "ほこりん",               className: "char-hokorin",
+        msg: "ふわっと増えていく、終わらない掃除の象徴。「これはつまらない」とジャッジした回数に応じて、少しずつ存在感が増えます。" },
+      { threshold: 10, name: "ぬれぞうきんさん",       className: "char-nurezoukin",
         msg: "がんばっているのに、部屋のキレイさはあまり変わらない段階です。" },
-      { threshold: 15, name: "ちゃぷ電池（3％妖精）",  spriteIndex: 2,
+      { threshold: 15, name: "ちゃぷ電池（3％妖精）",  className: "char-chap_denchi",
         msg: "ちょっとだけ焦らせてくる、安心感と不安のあいだのつまらなさ。" },
-      { threshold: 20, name: "ポストくん",             spriteIndex: 3,
+      { threshold: 20, name: "ポストくん",             className: "char-post_kun",
         msg: "どれだけ期待してもチラシばかり出てくる、情報過多なつまらなさゾーン。" },
-      { threshold: 25, name: "いねむりスリッパ",       spriteIndex: 4,
+      { threshold: 25, name: "いねむりスリッパ",       className: "char-inemuri_slipper",
         msg: "そろえても外出イベントにはならない、「そろえること」そのものの世界。" },
-      { threshold: 30, name: "すべりこみカレンダーくん", spriteIndex: 5,
+      { threshold: 30, name: "すべりこみカレンダーくん", className: "char-suberikomi_cal",
         msg: "日付だけが淡々と進んでいく、時間系のつまらなさ。" },
-      { threshold: 35, name: "くもりメガネさん",       spriteIndex: 6,
+      { threshold: 35, name: "くもりメガネさん",       className: "char-kumori_megane",
         msg: "ふいてもふいても完璧にならない、「見えにくさ」と付き合う段階。" },
-      { threshold: 40, name: "タオルたん",             spriteIndex: 7,
+      { threshold: 40, name: "タオルたん",             className: "char-taoru_tan",
         msg: "半乾きとともに生きていく、「まあこんなものか」というつまらなさ。" },
-      { threshold: 45, name: "Wi-Fiさがしのおばけ",    spriteIndex: 8,
+      { threshold: 45, name: "Wi-Fiさがしのおばけ",    className: "char-wifi_obake",
         msg: "どこまで探しても「超高速！」にはならない、探し続けるつまらなさ。" },
-      { threshold: 50, name: "つみかさねレシートくん", spriteIndex: 9,
+      { threshold: 50, name: "つみかさねレシートくん", className: "char-tsumikasane_rec",
         msg: "捨てるか残すか迷い続ける、生活ログ系つまらなさの最終形。" }
     ];
 
     const bossCharacter = {
       name: "エンドレス家事メモりん",
+      img:  BOSS_IMAGE_PATH,
       msg:  "どれだけチェックしてもやることが減らない、「終わらない家事リスト」の化身です。"
     };
 
-    // ===== お世話データ（そのまま） =====
+    // =====================
+    // つまらないお世話100個（前のものをそのまま使用）
+    // =====================
     const tasks = [
       "スマホの充電残量を毎朝チェックする（見ても充電は増えない）",
       "観葉植物の葉っぱのほこりをふく（すぐにまた積もる）",
@@ -844,6 +851,25 @@
       return { count0, count1, count2 };
     }
 
+    function showEmoji(emoji) {
+      characterSpriteEl.className = 'character-sprite';
+      characterSpriteEl.style.backgroundImage = 'none';
+      characterSpriteEl.textContent = emoji;
+    }
+
+    function showSprite(className) {
+      characterSpriteEl.className = 'character-sprite sprite-sheet ' + className;
+      characterSpriteEl.style.backgroundImage = ''; // CSSのsprite-sheetを使う
+      characterSpriteEl.textContent = '';
+    }
+
+    function showBoss() {
+      characterSpriteEl.className = 'character-sprite';
+      characterSpriteEl.style.backgroundImage = `url("${bossCharacter.img}")`;
+      characterSpriteEl.style.backgroundSize = 'contain';
+      characterSpriteEl.textContent = '';
+    }
+
     function updateCharacter() {
       const n = currentIndex;
       const { count0 } = countRatings();
@@ -854,10 +880,7 @@
 
       // すべて終わったらラスボス
       if (n >= TOTAL_TASKS) {
-        characterSpriteEl.style.backgroundImage = `url("${BOSS_IMAGE_URL}")`;
-        characterSpriteEl.style.backgroundSize  = "contain";
-        characterSpriteEl.style.backgroundPosition = "center";
-        characterSpriteEl.textContent = "";
+        showBoss();
         characterStatusEl.textContent = `ラスボス：${bossCharacter.name}`;
         characterMessageEl.textContent =
           bossCharacter.msg + "　今日も「やることリスト」は静かにページを増やしていきます。";
@@ -866,8 +889,7 @@
 
       // まだ「これはつまらない」が1回も出ていない → 卵
       if (count0 === 0) {
-        characterSpriteEl.style.backgroundImage = "none";
-        characterSpriteEl.textContent = "🥚";
+        showEmoji("🥚");
         characterStatusEl.textContent = "？？？（まだ世界を知らないたまご）";
         characterMessageEl.textContent =
           "まずは1回だけ「これはつまらない」とジャッジしてみると、最初の変な幼虫が生まれます。";
@@ -876,8 +898,7 @@
 
       // 1〜2回 → 変な幼虫
       if (count0 > 0 && count0 < 3) {
-        characterSpriteEl.style.backgroundImage = "none";
-        characterSpriteEl.textContent = "🪱";
+        showEmoji("🪱");
         characterStatusEl.textContent = "変な幼虫（つまらなさを食べて育つ）";
         characterMessageEl.textContent =
           `いままでに「これはつまらない」とジャッジした回数：${count0} 回。そろそろさなぎになる準備をしています。`;
@@ -886,20 +907,19 @@
 
       // 3〜4回 → へんなさなぎ
       if (count0 >= 3 && count0 < 5) {
-        characterSpriteEl.style.backgroundImage = "none";
-        characterSpriteEl.textContent = "🫧";
+        showEmoji("🫧");
         characterStatusEl.textContent = "へんなさなぎ（つまらないエネルギーをため込み中）";
         characterMessageEl.textContent =
           `「これはつまらない」が ${count0} 回分たまってきました。あと少しで生活感のあるキャラとして孵化します。`;
         return;
       }
 
-      // 5回以上 → 10キャラのどれか
+      // 5回以上 → 10キャラから1体
       let stage = evolutionCharacters[0];
       for (const s of evolutionCharacters) {
         if (count0 >= s.threshold) stage = s;
       }
-      setSpriteByIndex(stage.spriteIndex);
+      showSprite(stage.className);
       characterStatusEl.textContent = `つまらないキャラ：${stage.name}`;
       characterMessageEl.textContent =
         stage.msg + `（「これはつまらない」とジャッジした回数：${count0} 回）`;
