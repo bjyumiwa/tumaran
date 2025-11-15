@@ -29,8 +29,6 @@
       border-radius: 24px;
       padding: 24px 20px 22px;
       box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
-      position: relative;
-      z-index: 1;
     }
 
     .header {
@@ -46,13 +44,14 @@
     }
 
     .subtitle {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: #a06340;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
+      line-height: 1.6;
     }
 
     .hint {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #b07a52;
       opacity: 0.9;
     }
@@ -63,8 +62,55 @@
       }
 
       .main-title {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
       }
+    }
+
+    /* スタート画面 */
+    #gameContainer {
+      display: none;
+    }
+
+    .start-body {
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.8;
+      color: #5b3624;
+      font-size: 0.95rem;
+    }
+
+    .start-list {
+      text-align: left;
+      display: inline-block;
+      margin: 8px 0 4px;
+      padding-left: 1.1em;
+      font-size: 0.9rem;
+      color: #6c4330;
+    }
+
+    .start-btn {
+      margin-top: 14px;
+      background: #ffcbdd;
+      color: #5a2830;
+      border: none;
+      padding: 10px 26px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+      transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.05s ease;
+    }
+
+    .start-btn:hover {
+      background: #ffd7e7;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+    }
+
+    .start-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
     }
 
     /* 上段：つまらない度メーター＋キャラ成長 */
@@ -146,9 +192,18 @@
     }
 
     .character-display {
-      font-size: 3.4rem;
-      margin: 8px 0 4px;
-      transition: transform 0.35s ease;
+      margin-top: 4px;
+    }
+
+    .character-sprite {
+      width: 96px;
+      height: 96px;
+      margin: 4px auto;
+      background-image: url("public/chara/boring_chars.png");
+      background-repeat: no-repeat;
+      background-size: 400% 300%; /* 4列×3行のスプライト前提 */
+      background-position: 0% 0%;
+      image-rendering: auto;
     }
 
     .character-status {
@@ -222,10 +277,10 @@
     }
 
     .status {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: #543123;
       margin: 0 0 6px;
-      line-height: 1.5;
+      line-height: 1.7;
     }
 
     .task-hint {
@@ -286,9 +341,10 @@
     }
 
     .log-message {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #a56c49;
       min-height: 1.4em;
+      margin-top: 2px;
     }
 
     .result-box {
@@ -319,7 +375,7 @@
       opacity: 0.8;
     }
 
-    /* ミニゲームモーダル */
+    /* ミニゲームモーダル（上から落ちてくるものを取る） */
     .analysis-modal {
       position: fixed;
       top: 0;
@@ -370,17 +426,17 @@
       touch-action: none;
     }
 
-    /* 💩💧落ちもの用 */
     .mini-item {
       position: absolute;
-      width: 24px;
-      height: 24px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
+      background: #ffb7cf;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.18);
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      pointer-events: none;
     }
 
     #miniCatcher {
@@ -390,27 +446,6 @@
       height: 10px;
       border-radius: 10px;
       background: #ff9a59;
-    }
-
-    /* 並べる系ブロック */
-    .mini-block {
-      position: absolute;
-      width: 28px;
-      height: 18px;
-      border-radius: 4px;
-      background: #ffd8aa;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    }
-
-    /* 掃除系の汚れ */
-    .mini-dirt {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #fff7e9 0%, #d9a97a 40%, #b37846 100%);
-      box-shadow: 0 0 4px rgba(0,0,0,0.2);
-      cursor: pointer;
     }
 
     .mini-footer {
@@ -456,99 +491,39 @@
     .hidden {
       display: none;
     }
-
-    /* スタート画面（最初のページ） */
-    .start-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(255, 247, 233, 0.96);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1200;
-      padding: 16px;
-    }
-
-    .start-card {
-      max-width: 520px;
-      width: 100%;
-      background: #fffaf2;
-      border-radius: 22px;
-      padding: 20px 18px 18px;
-      border: 2px solid #f0d2aa;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
-    }
-
-    .start-title {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: #7b3a2e;
-      margin: 0 0 8px;
-      text-align: center;
-    }
-
-    .start-sub {
-      font-size: 0.9rem;
-      color: #a06340;
-      margin: 0 0 10px;
-      text-align: center;
-    }
-
-    .start-text {
-      font-size: 0.8rem;
-      color: #7b4a27;
-      line-height: 1.6;
-      margin-bottom: 10px;
-    }
-
-    .start-list {
-      font-size: 0.78rem;
-      color: #7b4a27;
-      margin: 0 0 10px 1.2em;
-      padding: 0;
-    }
-
-    .start-list li {
-      margin-bottom: 2px;
-    }
-
-    .start-hint {
-      font-size: 0.76rem;
-      color: #b07a52;
-      margin-bottom: 10px;
-    }
-
-    .start-btn {
-      border: none;
-      border-radius: 999px;
-      padding: 8px 18px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      background: #ffb9d2;
-      color: #5a2830;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
-      margin: 0 auto;
-      display: block;
-    }
-
-    .start-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
-    }
-
-    .start-btn:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
 </head>
 <body>
-  <div class="container">
+
+  <!-- スタート画面 -->
+  <div id="startScreen" class="container">
+    <header class="header">
+      <h1 class="main-title" id="startMainTitle">🥚 つまらないお世話ゲーム</h1>
+      <p class="subtitle">
+        報われないお世話を100個だけ観察する、小さな実験ゲームです。<br>
+        毎回、お世話の文章を読んで → ミニゲームで「なんとなくお世話」 → そのあとでつまらなさをジャッジします。
+      </p>
+      <p class="hint">
+        ゲームの最後には、10体のつまらないキャラと、ラスボス「エンドレス家事メモりん」が登場します。
+      </p>
+    </header>
+    <div class="start-body">
+      遊び方の流れ
+      <ul class="start-list">
+        <li>1. まずは「つまらないお世話」の文章を読む</li>
+        <li>2. 5秒だけ、落ちものミニゲームでお世話してみる（時々💩や💧が落ちてきます）</li>
+        <li>3. 今の気分で「これはつまらない」「まあつまらない」「意外と好きかも」を押す</li>
+      </ul>
+      <div>100個ジャッジすると、あなた専用の「つまらないお世話の内訳」とラスボスが表示されます。</div>
+      <button id="startButton" class="start-btn">はじめる</button>
+    </div>
+  </div>
+
+  <!-- メインゲーム画面 -->
+  <div id="gameContainer" class="container">
     <header class="header">
       <h1 class="main-title" id="mainTitle">🥚 つまらないお世話ゲーム</h1>
       <p class="subtitle" id="subtitle">報われないお世話を100個こなすと、変なキャラが生まれます。</p>
@@ -569,18 +544,19 @@
           <div class="meter-sub" id="boredomSub">
             ジャッジが増えるほど、このメーターがじわじわ動きます。
           </div>
-          <div class="meter-sub" id="boredomDetail">
-            まだ「これはつまらない／まあつまらない／意外と好き」が記録されていません。
+          <div class="meter-sub" id="boredomBreakdown">
           </div>
         </div>
       </div>
 
       <!-- 成長するキャラクター -->
       <div class="card character-growth">
-        <h2>🌱 成長するよく分からないキャラ</h2>
+        <h2>🌱 成長するつまらないキャラ</h2>
         <div class="character-area">
-          <div class="character-display" id="growthCharacter">🥚</div>
-          <div class="character-status" id="characterStatus">卵（まだ世界を知らない）</div>
+          <div class="character-display">
+            <div id="characterSprite" class="character-sprite"></div>
+          </div>
+          <div class="character-status" id="characterStatus">つまらないキャラ：ほこりん</div>
           <div class="growth-progress">
             <div class="progress-bar">
               <div class="progress-fill" id="growthProgress"></div>
@@ -588,7 +564,7 @@
             <div class="growth-stage" id="growthStage">つまらないお世話：0 / 100</div>
           </div>
           <div class="character-message" id="characterMessage">
-            つまらないお世話が10個たまると、不細工な幼虫になります。
+            つまらないお世話が増えるほど、10体のキャラが順番に出てきます。
           </div>
         </div>
       </div>
@@ -603,7 +579,7 @@
       <div class="game-area">
         <p class="status" id="taskText"></p>
         <p class="task-hint" id="taskHint">
-          まずは5秒だけ、ミニゲームで「なんとなくお世話」してみてください。
+          まずは5秒だけ、謎の落ちものミニゲームで「なんとなくお世話」してみてください。
         </p>
         <div class="care-buttons" id="ratingButtons">
           <button class="btn" data-score="0">
@@ -622,38 +598,16 @@
     </div>
 
     <footer>
-      100個ぜんぶジャッジすると、「つまらないお世話の内訳」と変なキャラクターの最終形が表示されます。
+      100個ぜんぶジャッジすると、「つまらないお世話の内訳」とラスボス「エンドレス家事メモりん」が表示されます。
     </footer>
   </div>
 
-  <!-- 最初のページ（スタート画面） -->
-  <div class="start-overlay" id="startOverlay">
-    <div class="start-card">
-      <h2 class="start-title">つまらないお世話ゲーム</h2>
-      <p class="start-sub">報われないお世話を100個こなして、よく分からないキャラを育てます。</p>
-      <p class="start-text">
-        このゲームでは、日常の「どうでもいいお世話」を100個体験して、<br>
-        そのつまらなさを自分でジャッジしていきます。
-      </p>
-      <ul class="start-list">
-        <li>1つ目のお世話から順番に表示されます。</li>
-        <li>毎回5秒だけ、言葉にちなんだミニゲームで「ちょっとだけ体験」します。</li>
-        <li>ときどき、💩や💧が落ちてくるだけの意味のないゲームも混ざります。</li>
-        <li>そのあと、「つまらない度」を3段階でジャッジします。</li>
-      </ul>
-      <p class="start-hint">
-        「つまらない」をちゃんと眺めると、案外おもしろいかもしれません。
-      </p>
-      <button class="start-btn" id="startGameBtn">ゲームをはじめる</button>
-    </div>
-  </div>
-
-  <!-- ミニお世話ゲーム -->
+  <!-- ミニお世話ゲーム（5秒だけの落ちものゲーム） -->
   <div class="analysis-modal" id="miniModal">
     <div class="analysis-content">
       <h2 class="analysis-title">ミニお世話ゲーム</h2>
       <p class="mini-caption" id="miniCaption">
-        今回の「つまらないお世話」を、ちょっとだけ体験するミニゲームです。
+        今回の「つまらないお世話」を、なぜか落ちてくるものを拾うゲームで表現しています。（あまり意味はありません）
       </p>
       <div class="mini-area" id="miniArea">
         <div id="miniCatcher"></div>
@@ -673,10 +627,45 @@
 
   <script>
     // =====================
-    // データ：つまらないお世話100個
+    // 定数
     // =====================
     const TOTAL_TASKS = 100;
+    const SPRITE_IMAGE_URL = "public/chara/boring_chars.png";
+    const BOSS_IMAGE_URL = "public/chara/endless_memorin.png";
 
+    // 「これはつまらない」（score=0）の回数に応じて出てくる10キャラ
+    // spriteIndex は 4列×3行スプライトの何番目か
+    const evolutionCharacters = [
+      { threshold: 0,  name: "ほこりん",                 spriteIndex: 0,
+        msg: "ふわっと増えていく、終わらない掃除の象徴。" },
+      { threshold: 5,  name: "ぬれぞうきんさん",         spriteIndex: 1,
+        msg: "がんばっているのに、部屋のキレイさはあまり変わらない段階です。" },
+      { threshold: 10, name: "ちゃぷ電池（3％妖精）",    spriteIndex: 2,
+        msg: "ちょっとだけ焦らせてくる、安心感と不安のあいだのつまらなさ。" },
+      { threshold: 15, name: "ポストくん",               spriteIndex: 3,
+        msg: "どれだけ期待してもチラシばかり出てくる、情報過多なつまらなさゾーン。" },
+      { threshold: 20, name: "いねむりスリッパ",         spriteIndex: 4,
+        msg: "そろえても外出イベントにはならない、「そろえること」そのものの世界。" },
+      { threshold: 25, name: "すべりこみカレンダーくん", spriteIndex: 5,
+        msg: "日付だけが淡々と進んでいく、時間系のつまらなさ。" },
+      { threshold: 30, name: "くもりメガネさん",         spriteIndex: 6,
+        msg: "ふいてもふいても完璧にならない、「見えにくさ」と付き合う段階。" },
+      { threshold: 35, name: "タオルたん",               spriteIndex: 7,
+        msg: "半乾きとともに生きていく、「まあこんなものか」というつまらなさ。" },
+      { threshold: 40, name: "Wi-Fiさがしのおばけ",      spriteIndex: 8,
+        msg: "どこまで探しても「超高速！」にはならない、探し続けるつまらなさ。" },
+      { threshold: 45, name: "つみかさねレシートくん",   spriteIndex: 9,
+        msg: "捨てるか残すか迷い続ける、生活ログ系つまらなさの最終形。" }
+    ];
+
+    const bossCharacter = {
+      name: "エンドレス家事メモりん",
+      msg: "どれだけチェックしてもやることが減らない、「終わらない家事リスト」の化身です。"
+    };
+
+    // =====================
+    // データ：つまらないお世話100個
+    // =====================
     const tasks = [
       "スマホの充電残量を毎朝チェックする（見ても充電は増えない）",
       "観葉植物の葉っぱのほこりをふく（すぐにまた積もる）",
@@ -783,12 +772,16 @@
     // =====================
     // DOM 取得
     // =====================
+    const startScreenEl = document.getElementById('startScreen');
+    const gameContainerEl = document.getElementById('gameContainer');
+    const startButtonEl = document.getElementById('startButton');
+
     const boredomFillEl = document.getElementById('boredomFill');
     const boredomLevelEl = document.getElementById('boredomLevel');
     const boredomSubEl = document.getElementById('boredomSub');
-    const boredomDetailEl = document.getElementById('boredomDetail');
+    const boredomBreakdownEl = document.getElementById('boredomBreakdown');
 
-    const characterEl = document.getElementById('growthCharacter');
+    const characterSpriteEl = document.getElementById('characterSprite');
     const characterStatusEl = document.getElementById('characterStatus');
     const characterMessageEl = document.getElementById('characterMessage');
     const growthProgressEl = document.getElementById('growthProgress');
@@ -811,9 +804,6 @@
     const miniStartBtn = document.getElementById('miniStartBtn');
     const miniOkBtn = document.getElementById('miniOkBtn');
 
-    const startOverlayEl = document.getElementById('startOverlay');
-    const startGameBtn = document.getElementById('startGameBtn');
-
     // =====================
     // 状態
     // =====================
@@ -821,41 +811,22 @@
     const ratings = [];            // 各お世話のジャッジ（0,1,2）
     let miniPlayedForThisTask = false;
 
-    // ミニゲーム共通
+    // ミニゲーム用
     let miniPlaying = false;
     let miniStartTime = 0;
     const miniDuration = 5000; // 5秒
     let miniTimerInterval = null;
     let miniGameInterval = null;
+    let miniItems = [];
     let miniCaught = 0;
     let catcherX = 0;
-    let miniType = 'poopdrop'; // 'poopdrop' | 'align' | 'clean'
-
-    // 💩💧落ちもの用
-    let miniItems = [];
-    let miniSymbolMode = 'random'; // 'poop' | 'drop' | 'random'
-
-    // つまらないキャラの段階（さなぎ以降・10段階）
-    const boringCharacterStages = [
-      { threshold: 0,  emoji: '🫧', status: 'なぞのさなぎ Lv.0', msg: 'まだつまらなさは控えめです。ここからどんなキャラになるでしょう。' },
-      { threshold: 3,  emoji: '😶', status: 'つまらなさ見習い', msg: '「これはつまらない」が少しずつ集まりはじめました。' },
-      { threshold: 6,  emoji: '😐', status: 'つまらなさ初心者', msg: '退屈なルーティンに、ちょっと慣れてきたようです。' },
-      { threshold: 10, emoji: '🥱', status: 'あくびをこらえる存在', msg: 'あくびが出そうなつまらなさが、いい感じにたまっています。' },
-      { threshold: 15, emoji: '😴', status: '半分寝ているキャラ', msg: 'つまらないお世話が子守唄になりつつあります。' },
-      { threshold: 20, emoji: '🫠', status: 'とけかけキャラ', msg: 'つまらなさに少しとけてきました。形があやしくなっています。' },
-      { threshold: 25, emoji: '👻', status: 'つまらない幽霊', msg: '存在感があるのかないのか、よく分からない状態です。' },
-      { threshold: 30, emoji: '🧟', status: 'つまらないゾンビ', msg: '同じお世話をくり返すことに、かなり慣れてきました。' },
-      { threshold: 40, emoji: '🤖', status: 'ルーティンロボ', msg: 'つまらない動きを自動化しはじめています。もう職人技です。' },
-      { threshold: 50, emoji: '👾', status: 'つまらなさの怪物', msg: 'つまらないお世話から生まれた、新種のキャラクターかもしれません。' }
-    ];
+    let currentMiniKind = 'normal'; // 'normal' | 'poop' | 'water'
 
     // =====================
     // ユーティリティ
     // =====================
     function countRatings() {
-      let count0 = 0;
-      let count1 = 0;
-      let count2 = 0;
+      let count0 = 0, count1 = 0, count2 = 0;
       ratings.forEach(r => {
         if (r === 0) count0++;
         else if (r === 1) count1++;
@@ -864,97 +835,85 @@
       return { count0, count1, count2 };
     }
 
-    // お世話テキストからミニゲーム種別をざっくり決める
-    function decideMiniTypeForTask(text, index) {
-      const t = text;
+    // 4列×3行のスプライトから index 番目を表示
+    function setSpriteByIndex(index) {
+      const cols = 4;
+      const rows = 3;
+      const col = index % cols;
+      const row = Math.floor(index / cols);
 
-      // 並べる・そろえる系
-      if (t.includes('並べ') || t.includes('ならべ') || t.includes('そろえる') || t.includes('そろえて') || t.includes('順に')) {
-        return 'align';
-      }
+      characterSpriteEl.style.backgroundImage = `url("${SPRITE_IMAGE_URL}")`;
+      characterSpriteEl.style.backgroundSize = "400% 300%";
 
-      // 掃除・ごみ・ほこり系
-      if (t.includes('ほこり') || t.includes('ゴミ') || t.includes('ごみ') || t.includes('水しぶき') || t.includes('掃除') || t.includes('ごみ袋')) {
-        return 'clean';
-      }
-
-      // それ以外は💩💧落ちものゲーム
-      return 'poopdrop';
+      const x = (cols === 1) ? 0 : (col / (cols - 1)) * 100;
+      const y = (rows === 1) ? 0 : (row / (rows - 1)) * 100;
+      characterSpriteEl.style.backgroundPosition = `${x}% ${y}%`;
     }
 
     // =====================
-    // キャラ表示更新
+    // 表示更新
     // =====================
     function updateCharacter() {
-      const n = currentIndex; // ジャッジ済みのお世話数
-      const { count0 } = countRatings(); // 「これはつまらない」の回数
+      const n = currentIndex;
+      const { count0 } = countRatings();
 
-      let emoji = '🥚';
-      let status = '卵（まだ世界を知らない）';
-      let msg = 'つまらないお世話が10個たまると、不細工な幼虫になります。';
-
-      if (n >= 10 && n < 20) {
-        emoji = '🪱';
-        status = '不細工な幼虫';
-        msg = 'さらに10個で、見たことのない謎のさなぎになります。';
-      } else if (n >= 20 && n < TOTAL_TASKS) {
-        // さなぎ以降：つまらない（score 0）の回数に応じて10段階変化
-        let stage = boringCharacterStages[0];
-        for (const s of boringCharacterStages) {
-          if (count0 >= s.threshold) {
-            stage = s;
-          }
-        }
-        emoji = stage.emoji;
-        status = stage.status;
-        msg = stage.msg + '（まだ途中経過です）';
-      } else if (n >= TOTAL_TASKS) {
-        // 100個ジャッジ後：最終形
-        let stage = boringCharacterStages[boringCharacterStages.length - 1];
-        for (const s of boringCharacterStages) {
-          if (count0 >= s.threshold) {
-            stage = s;
-          }
-        }
-        emoji = stage.emoji;
-        status = '最終形：' + stage.status;
-        msg = stage.msg + ' 100個のお世話を終えたので、ここからは観察ターンかもしれません。';
-      }
-
-      characterEl.textContent = emoji;
-      characterStatusEl.textContent = status;
-      characterMessageEl.textContent = msg;
-
+      // 進行度バー（お世話の数）
       const percent = Math.min(100, (n / TOTAL_TASKS) * 100);
       growthProgressEl.style.width = percent + '%';
-      growthStageEl.textContent = `つまらないお世話：${Math.min(n, TOTAL_TASKS)} / ${TOTAL_TASKS}`;
+      growthStageEl.textContent =
+        `つまらないお世話：${Math.min(n, TOTAL_TASKS)} / ${TOTAL_TASKS}`;
+
+      // すべてジャッジし終わったらラスボス
+      if (n >= TOTAL_TASKS) {
+        characterSpriteEl.style.backgroundImage = `url("${BOSS_IMAGE_URL}")`;
+        characterSpriteEl.style.backgroundSize = "contain";
+        characterSpriteEl.style.backgroundPosition = "center";
+        characterStatusEl.textContent = `ラスボス：${bossCharacter.name}`;
+        characterMessageEl.textContent =
+          bossCharacter.msg + "　今日も「やることリスト」は静かにページを増やしていきます。";
+        return;
+      }
+
+      // それ以外は10体の進化キャラ
+      let stage = evolutionCharacters[0];
+      for (const s of evolutionCharacters) {
+        if (count0 >= s.threshold) {
+          stage = s;
+        }
+      }
+
+      setSpriteByIndex(stage.spriteIndex);
+      characterStatusEl.textContent = `つまらないキャラ：${stage.name}`;
+      characterMessageEl.textContent =
+        stage.msg + `（「これはつまらない」とジャッジした回数：${count0} 回）`;
     }
 
-    // =====================
-    // タスク表示
-    // =====================
     function updateTask() {
       const no = currentIndex + 1;
+
+      if (currentIndex >= TOTAL_TASKS) {
+        taskLabelEl.textContent = `すべてのお世話をジャッジしました`;
+        taskStageLabelEl.textContent = `${TOTAL_TASKS} / ${TOTAL_TASKS}`;
+        taskTextEl.textContent =
+          "ここから先は、エンドレス家事メモりんが静かにあなたの「やることリスト」を見守ります。";
+        taskHintEl.textContent = "下の結果ボックスで、今日のつまらないお世話の内訳を眺めてみてください。";
+        return;
+      }
+
       taskLabelEl.textContent = `No.${no} のつまらないお世話`;
       taskStageLabelEl.textContent = `${no} / ${TOTAL_TASKS}`;
       taskTextEl.textContent = tasks[currentIndex];
       taskHintEl.textContent =
-        'まずは5秒だけ、ミニゲームで「なんとなくお世話」してみてください。';
+        'まずは5秒だけ、落ちものミニゲームで「なんとなくお世話」してみてください。そのあとでジャッジしてみましょう。';
       logMessageEl.textContent = '';
     }
 
-    // =====================
-    // つまらない度メーター
-    // =====================
     function updateBoredomMeter() {
-      const { count0, count1, count2 } = countRatings();
-
       if (ratings.length === 0) {
         boredomFillEl.style.width = '0%';
         boredomLevelEl.textContent = '0% - まだ計測されていません';
         boredomSubEl.textContent = 'ジャッジが増えるほど、このメーターがじわじわ動きます。';
-        boredomDetailEl.textContent =
-          'まだ「これはつまらない／まあつまらない／意外と好き」が記録されていません。';
+        boredomBreakdownEl.textContent = '「これはつまらない」「まあつまらない」「意外と好きかも」の回数がここに表示されます。';
         return;
       }
 
@@ -977,8 +936,10 @@
 
       boredomLevelEl.textContent = label;
       boredomSubEl.textContent = `これまでに ${ratings.length} 個のお世話をジャッジしました。`;
-      boredomDetailEl.textContent =
-        `これまでの内訳：これはつまらない ${count0} 回 / まあつまらない ${count1} 回 / 意外と好きかも ${count2} 回`;
+
+      const { count0, count1, count2 } = countRatings();
+      boredomBreakdownEl.textContent =
+        `内訳： 「これはつまらない」${count0}回 ／ 「まあつまらない」${count1}回 ／ 「意外と好きかも」${count2}回`;
     }
 
     function setButtonsEnabled(enabled) {
@@ -1004,8 +965,8 @@
 
     function showFinalSummary() {
       const { count0, count1, count2 } = countRatings();
-      resultBoxEl.style.display = 'block';
 
+      resultBoxEl.style.display = 'block';
       resultBoxEl.innerHTML =
         `<p>100個すべてジャッジしました。</p>
          <p>つまらないお世話の内訳：</p>
@@ -1014,7 +975,7 @@
            <li>「まあつまらない」：${count1} 個</li>
            <li>「意外と好きかもしれない」：${count2} 個</li>
          </ul>
-         <p>この結果から生まれたのが、今の「変なキャラクター」です。</p>
+         <p>この結果をたどってたどり着いたのが、ラスボス「エンドレス家事メモりん」です。</p>
          <button class="btn small-btn" id="restartBtn">もう一度はじめから</button>`;
 
       const restartBtn = document.getElementById('restartBtn');
@@ -1066,8 +1027,29 @@
     }
 
     // =====================
-    // ミニゲーム共通
+    // ミニゲーム関連
     // =====================
+    function resetMiniGameView() {
+      miniPlaying = false;
+      miniStartTime = 0;
+      miniItems.forEach(obj => {
+        if (obj.el && obj.el.parentNode === miniAreaEl) {
+          miniAreaEl.removeChild(obj.el);
+        }
+      });
+      miniItems = [];
+      miniCaught = 0;
+      miniTimerEl.textContent = '5.0';
+      miniCounterEl.textContent = 'とれた数：0';
+      miniStartBtn.disabled = false;
+      miniStartBtn.classList.remove('hidden');
+      miniOkBtn.classList.add('hidden');
+
+      const rect = miniAreaEl.getBoundingClientRect();
+      catcherX = rect.width / 2;
+      miniCatcherEl.style.left = (catcherX - 20) + 'px';
+    }
+
     function stopMiniGame() {
       miniPlaying = false;
       if (miniTimerInterval) {
@@ -1078,30 +1060,11 @@
         clearInterval(miniGameInterval);
         miniGameInterval = null;
       }
-    }
-
-    function resetMiniGameView() {
-      stopMiniGame();
-      miniCaught = 0;
-      miniTimerEl.textContent = '5.0';
-      miniCounterEl.textContent = 'とれた数：0';
-
-      miniStartBtn.disabled = false;
-      miniStartBtn.classList.remove('hidden');
-      miniOkBtn.classList.add('hidden');
-
-      // ミニエリアからキャッチャー以外の要素を削除
-      Array.from(miniAreaEl.children).forEach(child => {
-        if (child !== miniCatcherEl) {
-          miniAreaEl.removeChild(child);
+      miniItems.forEach(obj => {
+        if (obj.el && obj.el.parentNode === miniAreaEl) {
+          miniAreaEl.removeChild(obj.el);
         }
       });
-
-      // キャッチャー位置を中央へ
-      const rect = miniAreaEl.getBoundingClientRect();
-      catcherX = rect.width / 2;
-      miniCatcherEl.style.left = (catcherX - 20) + 'px';
-
       miniItems = [];
     }
 
@@ -1110,6 +1073,7 @@
       miniPlaying = true;
       miniStartTime = performance.now();
       miniCaught = 0;
+      miniCounterEl.textContent = 'とれた数：0';
       miniStartBtn.disabled = true;
 
       miniTimerInterval = setInterval(() => {
@@ -1121,10 +1085,7 @@
         }
       }, 80);
 
-      // フレーム更新が必要なのは💩💧ゲームだけ
-      if (miniType === 'poopdrop') {
-        miniGameInterval = setInterval(updatePoopDropGame, 30);
-      }
+      miniGameInterval = setInterval(updateMiniGame, 30);
     }
 
     function endMiniGame() {
@@ -1132,74 +1093,48 @@
       stopMiniGame();
       miniStartBtn.classList.add('hidden');
       miniOkBtn.classList.remove('hidden');
-
-      let msg = 'ミニゲーム終了。いっぱいやっても、現実世界はあまり変わりません。';
-      if (miniType === 'align') {
-        msg = 'ミニゲーム終了。そろえてもそろえなくても、誰も見ていないかもしれません。';
-      } else if (miniType === 'clean') {
-        msg = 'ミニゲーム終了。いくらタップしても、また汚れる気がしてきました。';
-      }
-      miniCaptionEl.textContent = msg;
+      miniCaptionEl.textContent += "　たくさん取れても取れなくても、現実世界はあまり変わりません。";
     }
 
-    // =====================
-    // 💩💧 落ちものゲーム
-    // =====================
-    function decideMiniSymbolModeForTask() {
-      const no = currentIndex + 1;
-      // 18の倍数回は💩メイン、27の倍数回は💧メイン、それ以外はランダム
-      if (no % 18 === 0 && no % 27 === 0) {
-        miniSymbolMode = 'random';
-      } else if (no % 18 === 0) {
-        miniSymbolMode = 'poop';
-      } else if (no % 27 === 0) {
-        miniSymbolMode = 'drop';
-      } else {
-        miniSymbolMode = 'random';
-      }
-    }
-
-    function createMiniItem(areaRect) {
-      const itemEl = document.createElement('div');
-      itemEl.className = 'mini-item';
-
-      let symbol;
-      if (miniSymbolMode === 'poop') {
-        symbol = '💩';
-      } else if (miniSymbolMode === 'drop') {
-        symbol = '💧';
-      } else {
-        symbol = Math.random() < 0.5 ? '💩' : '💧';
-      }
-
-      itemEl.textContent = symbol;
-
-      const itemSize = 24;
-      const x = Math.random() * (areaRect.width - itemSize) + itemSize / 2;
-      const y = -itemSize;
-
-      itemEl.style.left = (x - itemSize / 2) + 'px';
-      itemEl.style.top = y + 'px';
-
-      miniAreaEl.appendChild(itemEl);
-      miniItems.push({ x, y, el: itemEl });
-    }
-
-    function updatePoopDropGame() {
+    function updateMiniGame() {
       const areaRect = miniAreaEl.getBoundingClientRect();
       const catcherWidth = 40;
       const catcherY = areaRect.height - 6 - 10;
 
-      // ランダムに💩や💧が落ちてくる
+      // ランダムに落ちてくる
       if (Math.random() < 0.12) {
-        createMiniItem(areaRect);
+        const itemEl = document.createElement('div');
+        itemEl.className = 'mini-item';
+
+        let displayEmoji = '';
+        if (currentMiniKind === 'poop') {
+          displayEmoji = '💩';
+        } else if (currentMiniKind === 'water') {
+          displayEmoji = '💧';
+        }
+
+        if (displayEmoji) {
+          itemEl.textContent = displayEmoji;
+          itemEl.style.background = 'transparent';
+          itemEl.style.width = '22px';
+          itemEl.style.height = '22px';
+          itemEl.style.fontSize = '18px';
+        }
+
+        const itemWidth = displayEmoji ? 22 : 14;
+        const x = Math.random() * (areaRect.width - itemWidth) + itemWidth / 2;
+        const y = -itemWidth;
+        itemEl.style.left = (x - itemWidth / 2) + 'px';
+        itemEl.style.top = y + 'px';
+        miniAreaEl.appendChild(itemEl);
+        miniItems.push({ x, y, el: itemEl, halfWidth: itemWidth / 2 });
       }
 
       const speed = 3;
       const newItems = [];
       miniItems.forEach(obj => {
         obj.y += speed;
-        if (obj.y > areaRect.height + 30) {
+        if (obj.y > areaRect.height + 20) {
           if (obj.el.parentNode === miniAreaEl) {
             miniAreaEl.removeChild(obj.el);
           }
@@ -1207,7 +1142,7 @@
         }
 
         const dx = obj.x - catcherX;
-        if (obj.y >= catcherY - 18 && Math.abs(dx) < catcherWidth / 2 + 6) {
+        if (obj.y >= catcherY - 10 && Math.abs(dx) < catcherWidth / 2 + obj.halfWidth) {
           miniCaught += 1;
           miniCounterEl.textContent = 'とれた数：' + miniCaught;
           if (obj.el.parentNode === miniAreaEl) {
@@ -1224,127 +1159,50 @@
       miniCatcherEl.style.left = (catcherX - catcherWidth / 2) + 'px';
     }
 
-    // =====================
-    // 並べるミニゲーム
-    // =====================
-    function setupAlignMini() {
-      miniCatcherEl.style.display = 'none';
-      miniCounterEl.textContent = 'そろえた数：0';
-      miniCaught = 0;
-
+    function onMiniPointerMove(e) {
       const rect = miniAreaEl.getBoundingClientRect();
-      const targetY = rect.height / 2;
-
-      const blockCount = 5;
-      for (let i = 0; i < blockCount; i++) {
-        const block = document.createElement('div');
-        block.className = 'mini-block';
-
-        const x = 20 + Math.random() * (rect.width - 40);
-        const y = 20 + Math.random() * (rect.height - 60);
-
-        block.style.left = (x - 14) + 'px';
-        block.style.top = y + 'px';
-
-        block.addEventListener('click', () => {
-          // タップすると中央ラインにそろう
-          block.style.top = (targetY - 9) + 'px';
-          miniCaught += 1;
-          miniCounterEl.textContent = 'そろえた数：' + miniCaught;
-        });
-
-        miniAreaEl.appendChild(block);
-      }
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      let x = clientX - rect.left;
+      x = Math.max(20, Math.min(rect.width - 20, x));
+      catcherX = x;
+      const catcherWidth = 40;
+      miniCatcherEl.style.left = (catcherX - catcherWidth / 2) + 'px';
     }
 
-    // =====================
-    // 掃除ミニゲーム
-    // =====================
-    function setupCleanMini() {
-      miniCatcherEl.style.display = 'none';
-      miniCounterEl.textContent = 'こすった数：0';
-      miniCaught = 0;
-
-      const rect = miniAreaEl.getBoundingClientRect();
-      const dirtCount = 7;
-      for (let i = 0; i < dirtCount; i++) {
-        const dirt = document.createElement('div');
-        dirt.className = 'mini-dirt';
-
-        const x = 20 + Math.random() * (rect.width - 40);
-        const y = 20 + Math.random() * (rect.height - 60);
-
-        dirt.style.left = (x - 10) + 'px';
-        dirt.style.top = (y - 10) + 'px';
-
-        dirt.addEventListener('click', () => {
-          miniCaught += 1;
-          miniCounterEl.textContent = 'こすった数：' + miniCaught;
-          // こすっても消えない。ちょっとだけ位置をずらす。
-          const dx = (Math.random() - 0.5) * 10;
-          const dy = (Math.random() - 0.5) * 10;
-          const currentLeft = parseFloat(dirt.style.left);
-          const currentTop = parseFloat(dirt.style.top);
-          dirt.style.left = (currentLeft + dx) + 'px';
-          dirt.style.top = (currentTop + dy) + 'px';
-        });
-
-        miniAreaEl.appendChild(dirt);
-      }
-    }
-
-    // =====================
-    // ミニゲーム起動
-    // =====================
     function openMiniForCurrentTask() {
-      miniType = decideMiniTypeForTask(tasks[currentIndex], currentIndex);
       miniModalEl.style.display = 'flex';
 
-      let extra = '';
-      if (miniType === 'align') {
-        extra = '四角いブロックをタップして、なんとなく一列にそろえてみてください。';
-      } else if (miniType === 'clean') {
-        extra = '汚れのような丸をタップして、「こすっても消えない感じ」を味わってください。';
-      } else {
-        extra = '💩や💧をキャッチするだけの、ほとんど意味のない落ちものゲームです。';
+      const label = tasks[currentIndex] ? tasks[currentIndex].split('（')[0] : '';
+      const taskNo = currentIndex + 1;
+
+      // 18の倍数で💩、27の倍数で💧、両方の倍数ならランダム
+      currentMiniKind = 'normal';
+      if (taskNo % 18 === 0 && taskNo % 27 === 0) {
+        currentMiniKind = Math.random() < 0.5 ? 'poop' : 'water';
+      } else if (taskNo % 18 === 0) {
+        currentMiniKind = 'poop';
+      } else if (taskNo % 27 === 0) {
+        currentMiniKind = 'water';
       }
 
-      miniCaptionEl.textContent =
-        `「${tasks[currentIndex].split('（')[0]}」を、ちょっとだけ体験するミニゲームです。${extra}`;
+      if (currentMiniKind === 'poop') {
+        miniCaptionEl.textContent =
+          `「${label}」を、なぜか💩が落ちてくるゲームで表現しています。（本当に意味はありません）`;
+      } else if (currentMiniKind === 'water') {
+        miniCaptionEl.textContent =
+          `「${label}」を、なぜか💧が落ちてくるゲームで表現しています。（本当に意味はありません）`;
+      } else {
+        miniCaptionEl.textContent =
+          `「${label}」を、丸いものを拾うミニゲームでざっくり再現しています。（あまり関係はありません）`;
+      }
 
       resetMiniGameView();
-
-      if (miniType === 'align') {
-        setupAlignMini();
-      } else if (miniType === 'clean') {
-        setupCleanMini();
-      } else {
-        // 💩💧ゲーム
-        miniCatcherEl.style.display = 'block';
-        decideMiniSymbolModeForTask();
-        miniCounterEl.textContent = 'とれた数：0';
-      }
     }
 
-    // ポインタ操作（💩💧キャッチャー用）
-    miniAreaEl.addEventListener('mousemove', (e) => {
-      const rect = miniAreaEl.getBoundingClientRect();
-      const clientX = e.clientX;
-      let x = clientX - rect.left;
-      x = Math.max(20, Math.min(rect.width - 20, x));
-      catcherX = x;
-      const catcherWidth = 40;
-      miniCatcherEl.style.left = (catcherX - catcherWidth / 2) + 'px';
-    });
-
+    // ポインタ操作
+    miniAreaEl.addEventListener('mousemove', onMiniPointerMove);
     miniAreaEl.addEventListener('touchmove', function (e) {
-      const rect = miniAreaEl.getBoundingClientRect();
-      const clientX = e.touches[0].clientX;
-      let x = clientX - rect.left;
-      x = Math.max(20, Math.min(rect.width - 20, x));
-      catcherX = x;
-      const catcherWidth = 40;
-      miniCatcherEl.style.left = (catcherX - catcherWidth / 2) + 'px';
+      onMiniPointerMove(e);
       e.preventDefault();
     }, { passive: false });
 
@@ -1367,27 +1225,28 @@
     });
 
     // =====================
-    // 初期化とスタート画面
+    // ゲーム開始／初期化
     // =====================
     function initGame() {
       currentIndex = 0;
       ratings.length = 0;
       miniPlayedForThisTask = false;
+      resultBoxEl.style.display = 'none';
+      resultBoxEl.innerHTML = '';
       setButtonsEnabled(false);
       updateCharacter();
       updateTask();
       updateBoredomMeter();
+      openMiniForCurrentTask();
     }
 
-    window.addEventListener('load', () => {
+    function startGame() {
+      startScreenEl.style.display = 'none';
+      gameContainerEl.style.display = 'block';
       initGame();
-    });
+    }
 
-    startGameBtn.addEventListener('click', () => {
-      startOverlayEl.style.display = 'none';
-      initGame();
-      openMiniForCurrentTask();
-    });
+    startButtonEl.addEventListener('click', startGame);
 
     // =====================
     // Element SDK（タイトルとサブタイトルのカスタム用）
@@ -1402,6 +1261,10 @@
         config.main_title || defaultConfig.main_title;
       document.getElementById('subtitle').textContent =
         config.subtitle || defaultConfig.subtitle;
+
+      // スタート画面側タイトルもそろえておく
+      document.getElementById('startMainTitle').textContent =
+        config.main_title || defaultConfig.main_title;
     }
 
     function mapToCapabilities(config) {
