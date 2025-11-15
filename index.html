@@ -77,6 +77,12 @@
       box-shadow: 0 3px 0 #906B32;
     }
 
+    .btn-ghost {
+      background: #FDF7E6;
+      color: #8B5A3C;
+      box-shadow: 0 3px 0 #D1C19A;
+    }
+
     .btn:hover {
       transform: translateY(-1px);
       opacity: 0.9;
@@ -89,7 +95,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
       gap: 20px;
     }
 
@@ -123,89 +129,19 @@
       background: #E5D7B5;
     }
 
-    /* ひまポンカード */
-
-    .char-main {
-      display: grid;
-      grid-template-columns: 130px minmax(0, 1fr);
-      gap: 12px;
-      align-items: center;
-    }
-
-    @media (max-width: 600px) {
-      .char-main {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .char-image-wrapper {
-      width: 120px;
-      height: 120px;
-      border-radius: 28px;
-      background: #FFFFFF;
-      border: 1px solid #E6D6AA;
+    .column-left {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .char-image {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      image-rendering: auto;
-    }
-
-    .char-info-name {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .char-info-type {
-      font-size: 0.85rem;
-      opacity: 0.9;
-      margin-bottom: 6px;
-    }
-
-    .char-tags {
+    .column-right {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 8px;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .tag {
-      font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: #E9DFC4;
-    }
-
-    .char-description {
-      font-size: 0.9rem;
-      line-height: 1.6;
-      white-space: pre-line;
-    }
-
-    .char-footer-note {
-      margin-top: 8px;
-      font-size: 0.78rem;
-      opacity: 0.75;
-    }
-
-    /* 右側：今日のお世話 */
-
-    .task-list {
-      font-size: 0.9rem;
-      margin: 0;
-      padding-left: 18px;
-    }
-
-    .task-list li {
-      margin: 4px 0;
-    }
+    /* 今日のつまらないお世話 */
 
     .task-header-row {
       display: flex;
@@ -220,11 +156,74 @@
       opacity: 0.75;
     }
 
-    .task-actions {
-      margin-top: 10px;
+    .task-list {
+      font-size: 0.9rem;
+      margin: 0;
+      padding-left: 0;
+      list-style: none;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .task-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) auto;
       gap: 8px;
+      align-items: center;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: #FDF7E6;
+      border: 1px solid #E0D2AA;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .task-item {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .task-text {
+      line-height: 1.4;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      font-size: 0.78rem;
+    }
+
+    .task-count-pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #F0E3C6;
+      border: 1px solid #D9C79E;
+    }
+
+    .task-button {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #C89E5B;
+      color: #FDF7E6;
+      box-shadow: 0 2px 0 #906B32;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .task-button:hover {
+      transform: translateY(-1px);
+      opacity: 0.9;
+    }
+
+    .task-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 #906B32;
     }
 
     .counter-row {
@@ -265,8 +264,163 @@
       font-size: 0.8rem;
     }
 
-    .footer-note {
-      margin-top: 12px;
+    /* 100個リスト */
+
+    .full-list-wrapper {
+      max-height: 220px;
+      overflow: auto;
+      padding-right: 4px;
+      border-radius: 10px;
+      background: #FFFDF4;
+      border: 1px solid #E0D2AA;
+    }
+
+    .full-list {
+      margin: 8px 16px 12px;
+      padding-left: 20px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .full-list li {
+      margin: 2px 0;
+    }
+
+    .full-list-note {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      opacity: 0.75;
+    }
+
+    /* どうでもいいゲーム */
+
+    .game-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .game-tab {
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #D9C79E;
+      background: #FDF7E6;
+      cursor: pointer;
+      transition: background 0.1s ease, transform 0.1s ease;
+    }
+
+    .game-tab.active {
+      background: #C89E5B;
+      color: #FDF7E6;
+      border-color: #906B32;
+      transform: translateY(-1px);
+    }
+
+    .game-body-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .game-body-text {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      margin-bottom: 8px;
+    }
+
+    .game-action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 4px;
+      font-size: 0.85rem;
+    }
+
+    .game-counter {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #F0E3C6;
+      border: 1px solid #D9C79E;
+    }
+
+    .game-note {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      opacity: 0.75;
+    }
+
+    /* ひまポンミニカード */
+
+    .char-main {
+      display: grid;
+      grid-template-columns: 96px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    @media (max-width: 600px) {
+      .char-main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .char-image-wrapper {
+      width: 90px;
+      height: 90px;
+      border-radius: 24px;
+      background: #FFFFFF;
+      border: 1px solid #E6D6AA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .char-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      image-rendering: auto;
+    }
+
+    .char-info-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .char-info-type {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-bottom: 4px;
+    }
+
+    .char-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #E9DFC4;
+    }
+
+    .char-description {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .char-footer-note {
+      margin-top: 6px;
       font-size: 0.78rem;
       opacity: 0.75;
     }
@@ -280,6 +434,12 @@
       text-decoration: underline;
       cursor: pointer;
     }
+
+    .footer-note {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      opacity: 0.75;
+    }
   </style>
 </head>
 <body>
@@ -288,115 +448,157 @@
       <div class="title-block">
         <div class="title-main">つまらないお世話ゲーム</div>
         <div class="title-sub">
-          どうでもいいようで、ちょっと大事な「お世話」を集めて、ひまポンとゆるく暮らすゲーム。
+          100個の「つまらないお世話」と、どうでもいいゲームでゆるく暮らす実験場。
         </div>
       </div>
       <div class="header-buttons">
-        <button class="btn-secondary btn" id="startCareBtn">
-          今日のつまらないお世話をする
+        <button class="btn-secondary btn" id="scrollTodayTasksBtn">
+          今日のつまらないお世話へ
         </button>
-        <button class="btn" id="charCollectionBtn">
+        <button class="btn-ghost btn" id="charCollectionBtn">
           キャラコレクション
         </button>
       </div>
     </header>
 
     <main class="layout">
-      <!-- 左：ひまポンカード -->
-      <section class="card">
-        <div class="card-title">
-          ひまポンルーム
-          <span class="card-title-badge">ひまわり癒し系</span>
-        </div>
-
-        <div class="char-main">
-          <div class="char-image-wrapper">
-            <!-- ひまポンの画像パスは必要に応じて変更してください -->
-            <img src="public/chara/himapon.png" alt="ひまポン" class="char-image" id="himaponImage">
+      <div class="column-left">
+        <!-- 今日のつまらないお世話（メイン） -->
+        <section class="card" id="todayTasksCard">
+          <div class="task-header-row">
+            <div class="card-title">
+              今日のつまらないお世話
+              <span class="card-title-badge">100個リストからランダム3つ</span>
+            </div>
+            <div class="task-refresh-tip" id="lastUpdateLabel">
+              ロードするとお世話が入れ替わります
+            </div>
           </div>
-          <div>
-            <div class="char-info-name">ひまポン</div>
-            <div class="char-info-type">
-              がんばりすぎを見守る、ひだまり担当キャラ。
+
+          <ul class="task-list" id="taskList">
+            <!-- JSで3つ表示 -->
+          </ul>
+
+          <div class="task-actions" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;">
+            <button class="btn-secondary btn" id="rerollTasksBtn">
+              お世話を入れ替える
+            </button>
+            <button class="btn-ghost btn" id="resetCountsBtn">
+              カウントをリセットする
+            </button>
+          </div>
+
+          <div class="counter-row">
+            <div>
+              <div class="counter-label">つまらない度カウンター</div>
+              <div>
+                あなたが「やった」を押した回数を、全体とタスクごとにこっそり記録しています。
+              </div>
             </div>
-            <div class="char-tags">
-              <span class="tag">ひだまり担当</span>
-              <span class="tag">がんばりすぎ防止係</span>
+            <div class="counter-values">
+              <div class="counter-pill">
+                通算つまらない度：<span id="totalCount">0</span> 回
+              </div>
+              <div class="counter-pill">
+                今日の3つ合計：<span id="todayCount">0</span> 回
+              </div>
             </div>
-            <div class="char-description" id="himaponDescription">
+          </div>
+
+          <div class="footer-note">
+            カウントはブラウザ内の保存機能（localStorage）に記録されています。
+            別の端末やブラウザだとリセットされるかもしれませんね。
+          </div>
+        </section>
+
+        <!-- 100個リスト -->
+        <section class="card">
+          <div class="card-title">
+            つまらないお世話100個リスト
+            <span class="card-title-badge">スクロールして見られます</span>
+          </div>
+          <div class="full-list-wrapper">
+            <ol class="full-list" id="fullTaskList">
+              <!-- JSで100個表示 -->
+            </ol>
+          </div>
+          <div class="full-list-note">
+            前に一緒に考えた100個のリストを、ここから一覧で眺められます。
+            他にどんな「つまらないお世話」が思いつくか、追記していっても面白いかもしれませんね。
+          </div>
+        </section>
+      </div>
+
+      <div class="column-right">
+        <!-- どうでもいいゲームコーナー -->
+        <section class="card">
+          <div class="card-title">
+            どうでもいいゲームコーナー
+            <span class="card-title-badge">ミニゲーム集</span>
+          </div>
+
+          <div class="game-tabs" id="gameTabs">
+            <button class="game-tab active" data-game="remote">リモコンふきふき</button>
+            <button class="game-tab" data-game="slipper">スリッパそろえ</button>
+            <button class="game-tab" data-game="receipt">レシート山くずし</button>
+            <button class="game-tab" data-game="breath">深呼吸チャレンジ</button>
+          </div>
+
+          <div id="gameBody">
+            <!-- JSで切り替え -->
+          </div>
+
+          <div class="game-note">
+            本気でがんばるゲームではなく、「やってもやらなくても世界はあまり変わらない」けれど、
+            ちょっとだけ気持ちが軽くなるかもしれないゲームたちです。
+          </div>
+        </section>
+
+        <!-- ひまポンミニカード（サブ） -->
+        <section class="card">
+          <div class="card-title">
+            ひまポンルーム
+            <span class="card-title-badge">癒し系サポーター</span>
+          </div>
+          <div class="char-main">
+            <div class="char-image-wrapper">
+              <!-- ひまポンの画像パスは保存場所に合わせて変更してください -->
+              <img src="public/chara/himapon.png" alt="ひまポン" class="char-image">
+            </div>
+            <div>
+              <div class="char-info-name">ひまポン</div>
+              <div class="char-info-type">
+                がんばりすぎを見守る、ひだまり担当キャラ。
+              </div>
+              <div class="char-tags">
+                <span class="tag">ひだまり担当</span>
+                <span class="tag">がんばりすぎ防止係</span>
+              </div>
+              <div class="char-description">
 ひまわりのような顔をした、やさしい癒し系キャラ。
 あなたが「つまらないお世話」をがんばりすぎていると、
 そっとブレーキをかけてくれる。
 
 何もしない時間や、ぼーっとする時間も大事だよ、と
 静かに見守っている存在。
-            </div>
-            <div class="char-footer-note">
-              このキャラについてもっと知りたくなったら、
-              <button class="small-link-btn" id="openCollectionFromHimapon">
-                キャラコレクションの「ひまポン」を見てみる
-              </button>
-              のもよいかもしれませんね。
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 右：今日のつまらないお世話 -->
-      <section class="card">
-        <div class="task-header-row">
-          <div class="card-title">
-            今日のつまらないお世話
-            <span class="card-title-badge">ランダム3つ</span>
-          </div>
-          <div class="task-refresh-tip" id="lastUpdateLabel">
-            ロードするとお世話が入れ替わります
-          </div>
-        </div>
-
-        <ul class="task-list" id="taskList">
-          <!-- JSで今日のお世話を3つ表示 -->
-        </ul>
-
-        <div class="task-actions">
-          <button class="btn-secondary btn" id="didCareBtn">
-            どれか1つはやった！（つまらない度＋1）
-          </button>
-          <button class="btn" id="rerollTasksBtn">
-            お世話を入れ替える
-          </button>
-        </div>
-
-        <div class="counter-row">
-          <div>
-            <div class="counter-label">つまらない度カウンター</div>
-            <div>
-              あなたの「つまらないお世話」の回数を、
-              ひまポンがこっそり数えています。
+              </div>
+              <div class="char-footer-note">
+                キャラたちのプロフィールをじっくり読みたくなったら、
+                <button class="small-link-btn" id="openCollectionFromHimapon">
+                  キャラコレクションを開く
+                </button>
+                のもよいかもしれませんね。
+              </div>
             </div>
           </div>
-          <div class="counter-values">
-            <div class="counter-pill">
-              トータル：<span id="totalCount">0</span> 回
-            </div>
-            <div class="counter-pill">
-              ひまポン担当：<span id="himaponCount">0</span> 回
-            </div>
-          </div>
-        </div>
-
-        <div class="footer-note">
-          回数はブラウザ内の保存機能（localStorage）に記録されています。
-          別の端末や別のブラウザから見るとリセットされるかもしれませんね。  
-          他のキャラごとのカウントも、そのうち増やしていける設計になっています。
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   </div>
 
   <script>
-    // つまらないお世話の候補リスト
-    const CARE_TASKS = [
+    // つまらないお世話100個
+    const BORING_TASKS = [
       'リモコンの下だけ、さっと一ふきする',
       'ポストの一番上の手紙だけ中身を確認する',
       'スリッパをそろえて並べる',
@@ -416,68 +618,159 @@
       '洗濯かごから一番上の服をたたむ',
       'いすを机にきちんと入れる',
       '電気を1か所だけ消しに行く',
-      '何もしない時間を30秒だけつくって深呼吸する'
+      '何もしない時間を30秒だけつくって深呼吸する',
+      '玄関のたたきを一拭きだけしてみる',
+      '靴ひもをきれいに結び直す',
+      'ペン立てから、インクの出ないペンを1本だけ処分する',
+      '使いかけのメモ帳を1つだけ使い切る計画を立てる',
+      '机の上の本を1冊だけ、本棚に戻す',
+      'ハンカチを明日の分だけカバンに入れておく',
+      'マグカップを1つだけ洗っておく',
+      '洗面台の鏡の端っこを指でなぞってきれいにする',
+      'ベッドのシーツのしわを手で伸ばす',
+      'カーテンを一度だけ全開にして光を入れる',
+      '床に落ちている髪の毛を1本拾う',
+      '使っていない充電ケーブルを1本まとめる',
+      '机の引き出しを1段だけ開けて、中をちょっとだけ整える',
+      'ゴミ袋のストックを1枚だけ取り出して、すぐ使える場所に置く',
+      'ポケットの中身を全部出して、いらないものを1つ捨てる',
+      '冷蔵庫のドアポケットを1か所だけふく',
+      '玄関マットを軽くはたく',
+      '折れたクリップや壊れた小物を1つ捨てる',
+      'プリント類の山から、期限切れのものを1枚捨てる',
+      'ティッシュの箱に名前や顔を落書きしてみる',
+      'エアコンのリモコンの電池残量を確認するだけしてみる',
+      'お箸をきれいにそろえて箸立てに入れる',
+      'テーブルの角を1か所だけきれいにふく',
+      '読みかけの本にしおりをきちんとはさみ直す',
+      'よく座るいすの背もたれを手でなでて「今日もよろしく」と心の中で言う',
+      'ドアノブを1つだけアルコールでふく',
+      '洗濯物の山から、しわが気になる1枚をのばす',
+      '要らない通知メールを1件だけ解除する',
+      'ホーム画面のアプリを1つだけフォルダにしまう',
+      '使っていないノートに「メモ用」とタイトルを書く',
+      '机の上にある空きスペースをハンドタオル1枚分だけ作る',
+      '椅子の足の位置を机に対してまっすぐにそろえる',
+      'カーテンのほこりを手で軽く払う',
+      '洗濯ばさみを1か所に集める',
+      '脱ぎっぱなしの服を1枚だけハンガーにかける',
+      '洗い物の中からスプーンだけ全部洗ってしまう',
+      'リモコンのボタンを指でなぞってほこりを落とす',
+      '観葉植物の葉っぱを1枚だけふいてあげる',
+      '机の角にたまった消しゴムかすを集めて捨てる',
+      '書類の角をトントンしてそろえる',
+      '玄関の鍵置き場を1か所決めて、そこに鍵を置く',
+      'マスクのストックを数えて、足りなそうなら心の中でメモする',
+      '靴下を片方だけ裏返しから表に戻す',
+      'コンセントタップのスイッチを1つだけオフにする',
+      'マウスやキーボードをティッシュで軽くふく',
+      'カバンの底にたまったゴミを1つ拾う',
+      '机の下のコードを1本だけ結束バンドでまとめる',
+      '冷蔵庫の中身で賞味期限が近そうなものを1つ前に出す',
+      'ペットボトルのラベルを1本だけはがして洗う',
+      'トイレットペーパーのストックを1つだけ補充する',
+      'タオルをきれいにたたみ直して掛ける',
+      '洗濯機の上を一拭きする',
+      'ベッド横に落ちているものを1つ拾う',
+      '使いかけのボールペンを試し書きして生きているか確認する',
+      '読み終わったプリントの裏をメモ用紙にする',
+      'お箸やフォークの本数をざっくり数えてみる',
+      '玄関の靴を1足だけきちんとそろえる',
+      'お気に入りのマグカップを水でゆすいで乾かしておく',
+      '机の上に「何もしない用スペース」を10センチ四方だけ作る',
+      '文房具のキャップを全部ちゃんとしめる',
+      '洗剤ボトルの口をティッシュで一拭きする',
+      'キッチンのシンクに置いてあるものを1つだけ片付ける',
+      'ハンガーの向きをそろえる',
+      '枕をポンポンとたたいて形を整える',
+      'ゴミの日をカレンダーに1つだけ書き込む',
+      'カーテンのすき間から空を1回見上げる',
+      '机の上のコップの輪じみをふきとる',
+      '使わないクーポン券を1枚だけ捨てる',
+      'スマホの通知を1件だけ既読にして整理する',
+      '洗面所のコップをゆすいで逆さにしておく',
+      'トイレのペーパーホルダーを軽くふく',
+      '玄関の郵便受けの下に落ちている紙切れを拾う',
+      'キッチンタイマーや時計の時間を一応確認する',
+      '今日着ていた服をハンガーにかけて「おつかれさま」と心の中で言う',
+      '机の引き出しを1回だけ開けて深呼吸し、そっと閉じる',
+      '洗濯ネットを1つだけたたんで定位置に戻す',
+      'スマホの画面をふいた後、1分だけ何も見ない',
+      '窓のサッシを指でなぞってほこりを1か所だけ取る',
+      '使いかけのお菓子の袋をクリップでとめる',
+      'ゴミ袋の口をきちんと結ぶ',
+      'ゴミ箱の位置を少しだけ使いやすいところに動かす',
+      '今日やらなかったことを1つだけ「まあいいか」と心の中で許す'
     ];
 
     // localStorageキー
     const STORAGE_KEY_TOTAL = 'boringTotalCount';
-    const STORAGE_KEY_CHAR = 'boringCharCounts';
+    const STORAGE_KEY_TASK_COUNTS = 'boringTaskCounts';
     const STORAGE_KEY_LAST_UPDATE = 'boringLastTaskUpdate';
 
-    // DOM取得
+    // DOM
+    const scrollTodayTasksBtn = document.getElementById('scrollTodayTasksBtn');
     const charCollectionBtn = document.getElementById('charCollectionBtn');
     const openCollectionFromHimapon = document.getElementById('openCollectionFromHimapon');
-    const startCareBtn = document.getElementById('startCareBtn');
-    const didCareBtn = document.getElementById('didCareBtn');
-    const rerollTasksBtn = document.getElementById('rerollTasksBtn');
-    const taskListEl = document.getElementById('taskList');
-    const totalCountEl = document.getElementById('totalCount');
-    const himaponCountEl = document.getElementById('himaponCount');
-    const lastUpdateLabelEl = document.getElementById('lastUpdateLabel');
 
-    let currentTasks = [];
+    const taskListEl = document.getElementById('taskList');
+    const fullTaskListEl = document.getElementById('fullTaskList');
+    const lastUpdateLabelEl = document.getElementById('lastUpdateLabel');
+    const rerollTasksBtn = document.getElementById('rerollTasksBtn');
+    const resetCountsBtn = document.getElementById('resetCountsBtn');
+    const totalCountEl = document.getElementById('totalCount');
+    const todayCountEl = document.getElementById('todayCount');
+    const todayTasksCard = document.getElementById('todayTasksCard');
+
+    const gameTabsEl = document.getElementById('gameTabs');
+    const gameBodyEl = document.getElementById('gameBody');
+
+    let currentTaskIndices = [];
+    let todayLocalCount = 0;
+    let taskCounts = {};
 
     function openCollection() {
       window.location.href = 'char_collection.html';
+    }
+
+    function scrollToTodayTasks() {
+      const rect = todayTasksCard.getBoundingClientRect();
+      window.scrollTo({
+        top: window.scrollY + rect.top - 80,
+        behavior: 'smooth'
+      });
     }
 
     function loadCounts() {
       const total = parseInt(localStorage.getItem(STORAGE_KEY_TOTAL) || '0', 10);
       totalCountEl.textContent = total;
 
-      let charCounts = {};
       try {
-        const stored = localStorage.getItem(STORAGE_KEY_CHAR);
+        const stored = localStorage.getItem(STORAGE_KEY_TASK_COUNTS);
         if (stored) {
-          charCounts = JSON.parse(stored);
+          taskCounts = JSON.parse(stored);
+        } else {
+          taskCounts = {};
         }
       } catch (e) {
-        charCounts = {};
+        taskCounts = {};
       }
-
-      const hima = parseInt(charCounts.himapon || 0, 10);
-      himaponCountEl.textContent = hima;
     }
 
-    function saveCounts(deltaTotal = 0, deltaHimapon = 0) {
-      const newTotal = parseInt(localStorage.getItem(STORAGE_KEY_TOTAL) || '0', 10) + deltaTotal;
-      localStorage.setItem(STORAGE_KEY_TOTAL, String(newTotal));
-      totalCountEl.textContent = newTotal;
+    function saveCounts() {
+      localStorage.setItem(STORAGE_KEY_TOTAL, String(parseInt(totalCountEl.textContent || '0', 10)));
+      localStorage.setItem(STORAGE_KEY_TASK_COUNTS, JSON.stringify(taskCounts));
+    }
 
-      let charCounts = {};
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY_CHAR);
-        if (stored) {
-          charCounts = JSON.parse(stored);
-        }
-      } catch (e) {
-        charCounts = {};
-      }
-
-      const newHimapon = parseInt(charCounts.himapon || 0, 10) + deltaHimapon;
-      charCounts.himapon = newHimapon;
-      localStorage.setItem(STORAGE_KEY_CHAR, JSON.stringify(charCounts));
-      himaponCountEl.textContent = newHimapon;
+    function resetCounts() {
+      if (!confirm('つまらない度カウンター（通算）をリセットしますか？')) return;
+      localStorage.removeItem(STORAGE_KEY_TOTAL);
+      localStorage.removeItem(STORAGE_KEY_TASK_COUNTS);
+      totalCountEl.textContent = '0';
+      todayLocalCount = 0;
+      todayCountEl.textContent = '0';
+      taskCounts = {};
+      renderTodayTasks(currentTaskIndices); // カウント表示を更新
     }
 
     function formatDateTimeForLabel(d) {
@@ -494,74 +787,239 @@
         const now = new Date();
         localStorage.setItem(STORAGE_KEY_LAST_UPDATE, now.toISOString());
       }
-
       const stored = localStorage.getItem(STORAGE_KEY_LAST_UPDATE);
       if (!stored) {
         lastUpdateLabelEl.textContent = 'ロードするとお世話が入れ替わります';
         return;
       }
-
       const date = new Date(stored);
       lastUpdateLabelEl.textContent = 'お世話リスト更新：' + formatDateTimeForLabel(date);
     }
 
-    function chooseRandomTasks(count) {
-      const indices = [...CARE_TASKS.keys()];
+    function chooseRandomIndices(count) {
+      const indices = [...BORING_TASKS.keys()];
       for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [indices[i], indices[j]] = [indices[j], indices[i]];
       }
-      return indices.slice(0, count).map(i => CARE_TASKS[i]);
+      return indices.slice(0, count);
     }
 
-    function renderTasks() {
-      currentTasks = chooseRandomTasks(3);
+    function renderTodayTasks(indices) {
       taskListEl.innerHTML = '';
-      currentTasks.forEach(text => {
+      indices.forEach((idx) => {
         const li = document.createElement('li');
-        li.textContent = text;
+        li.className = 'task-item';
+
+        const textDiv = document.createElement('div');
+        textDiv.className = 'task-text';
+        textDiv.textContent = BORING_TASKS[idx];
+
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'task-meta';
+
+        const countSpan = document.createElement('span');
+        countSpan.className = 'task-count-pill';
+        const count = parseInt(taskCounts[idx] || 0, 10);
+        countSpan.textContent = '通算：' + count + ' 回';
+
+        const button = document.createElement('button');
+        button.className = 'task-button';
+        button.type = 'button';
+        button.textContent = 'やった！（＋1）';
+
+        button.addEventListener('click', () => {
+          const total = parseInt(totalCountEl.textContent || '0', 10) + 1;
+          totalCountEl.textContent = String(total);
+
+          const current = parseInt(taskCounts[idx] || 0, 10) + 1;
+          taskCounts[idx] = current;
+          countSpan.textContent = '通算：' + current + ' 回';
+
+          todayLocalCount += 1;
+          todayCountEl.textContent = String(todayLocalCount);
+
+          saveCounts();
+
+          button.textContent = 'おつかれさま！';
+          button.disabled = true;
+          setTimeout(() => {
+            button.textContent = 'やった！（＋1）';
+            button.disabled = false;
+          }, 1000);
+        });
+
+        metaDiv.appendChild(countSpan);
+        metaDiv.appendChild(button);
+
+        li.appendChild(textDiv);
+        li.appendChild(metaDiv);
         taskListEl.appendChild(li);
       });
-      updateLastUpdateLabel(true);
+    }
+
+    function renderFullTaskList() {
+      fullTaskListEl.innerHTML = '';
+      BORING_TASKS.forEach((text) => {
+        const li = document.createElement('li');
+        li.textContent = text;
+        fullTaskListEl.appendChild(li);
+      });
+    }
+
+    // どうでもいいゲームの定義
+    const GAMES = {
+      remote: {
+        title: 'リモコンふきふきゲーム',
+        text:
+          'ルールはかんたん。\n' +
+          '手に取りやすいリモコンを1つえらんで、ボタンのまわりをそっと一ふきします。\n\n' +
+          '全部きれいにしなくても、「やった」と思えたらクリアです。',
+        buttonLabel: 'リモコンをふいたことにする',
+        key: 'gameRemoteCount'
+      },
+      slipper: {
+        title: 'スリッパそろえゲーム',
+        text:
+          '部屋のどこかで迷子になっているスリッパやサンダルを1足だけ探して、\n' +
+          'もう片方のそばにそっと並べます。\n\n' +
+          'きれいにそろったら、スコアアップ。',
+        buttonLabel: 'スリッパをそろえたことにする',
+        key: 'gameSlipperCount'
+      },
+      receipt: {
+        title: 'レシート山くずしゲーム',
+        text:
+          '財布や机の上のレシートの山から、1枚だけ選んで処理します。\n' +
+          '捨てる／写真を撮って記録する／フォルダにしまう、どれでもOK。\n\n' +
+          '山が少しでも低くなったらクリア。',
+        buttonLabel: 'レシートを1枚片づけたことにする',
+        key: 'gameReceiptCount'
+      },
+      breath: {
+        title: '深呼吸チャレンジ',
+        text:
+          '何も片づけなくてもOKなゲームです。\n\n' +
+          'ゆっくり息を吸って、4つ数えます。\n' +
+          '息を止めて、4つ数えます。\n' +
+          'ゆっくり息を吐いて、4つ数えます。\n\n' +
+          'これが1セット。1回できたらクリアです。',
+        buttonLabel: '深呼吸を1セットしたことにする',
+        key: 'gameBreathCount'
+      }
+    };
+
+    function loadGameCount(key) {
+      return parseInt(localStorage.getItem(key) || '0', 10);
+    }
+
+    function saveGameCount(key, value) {
+      localStorage.setItem(key, String(value));
+    }
+
+    function renderGame(gameId) {
+      const game = GAMES[gameId];
+      if (!game) return;
+
+      const count = loadGameCount(game.key);
+
+      gameBodyEl.innerHTML = '';
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'game-body-title';
+      titleEl.textContent = game.title;
+
+      const textEl = document.createElement('div');
+      textEl.className = 'game-body-text';
+      textEl.textContent = game.text;
+
+      const actionRow = document.createElement('div');
+      actionRow.className = 'game-action-row';
+
+      const btn = document.createElement('button');
+      btn.className = 'btn-secondary btn';
+      btn.type = 'button';
+      btn.textContent = game.buttonLabel;
+
+      const counterEl = document.createElement('span');
+      counterEl.className = 'game-counter';
+      counterEl.textContent = 'このゲームのプレイ回数：' + count + ' 回';
+
+      btn.addEventListener('click', () => {
+        const newCount = loadGameCount(game.key) + 1;
+        saveGameCount(game.key, newCount);
+        counterEl.textContent = 'このゲームのプレイ回数：' + newCount + ' 回';
+
+        btn.textContent = 'クリア！';
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = game.buttonLabel;
+          btn.disabled = false;
+        }, 1000);
+      });
+
+      actionRow.appendChild(btn);
+      actionRow.appendChild(counterEl);
+
+      gameBodyEl.appendChild(titleEl);
+      gameBodyEl.appendChild(textEl);
+      gameBodyEl.appendChild(actionRow);
+    }
+
+    function setActiveGameTab(gameId) {
+      document.querySelectorAll('.game-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.game === gameId);
+      });
+      renderGame(gameId);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       // ボタン動作
+      if (scrollTodayTasksBtn) {
+        scrollTodayTasksBtn.addEventListener('click', scrollToTodayTasks);
+      }
       if (charCollectionBtn) {
         charCollectionBtn.addEventListener('click', openCollection);
       }
       if (openCollectionFromHimapon) {
         openCollectionFromHimapon.addEventListener('click', openCollection);
       }
-      if (startCareBtn) {
-        startCareBtn.addEventListener('click', () => {
-          // スクロールして今日のお世話カードへ
-          const rect = taskListEl.getBoundingClientRect();
-          window.scrollTo({
-            top: window.scrollY + rect.top - 80,
-            behavior: 'smooth'
-          });
-        });
-      }
-      if (didCareBtn) {
-        didCareBtn.addEventListener('click', () => {
-          saveCounts(1, 1); // トータル＋1、ひまポン担当＋1
-          didCareBtn.textContent = 'おつかれさま！（もう1回カウントする）';
-          setTimeout(() => {
-            didCareBtn.textContent = 'どれか1つはやった！（つまらない度＋1）';
-          }, 1200);
-        });
-      }
+
       if (rerollTasksBtn) {
         rerollTasksBtn.addEventListener('click', () => {
-          renderTasks();
+          todayLocalCount = 0;
+          todayCountEl.textContent = '0';
+          currentTaskIndices = chooseRandomIndices(3);
+          renderTodayTasks(currentTaskIndices);
+          updateLastUpdateLabel(true);
         });
       }
 
-      // 初期表示
+      if (resetCountsBtn) {
+        resetCountsBtn.addEventListener('click', resetCounts);
+      }
+
+      // 100個リスト表示
+      renderFullTaskList();
+
+      // カウント読み込みと今日のタスク表示
       loadCounts();
-      renderTasks();
+      todayLocalCount = 0;
+      todayCountEl.textContent = '0';
+      currentTaskIndices = chooseRandomIndices(3);
+      renderTodayTasks(currentTaskIndices);
       updateLastUpdateLabel(false);
+
+      // どうでもいいゲームタブ
+      if (gameTabsEl) {
+        gameTabsEl.addEventListener('click', (e) => {
+          const btn = e.target.closest('.game-tab');
+          if (!btn) return;
+          const gameId = btn.dataset.game;
+          setActiveGameTab(gameId);
+        });
+      }
+      setActiveGameTab('remote');
     });
   </script>
 </body>
