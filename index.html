@@ -319,7 +319,7 @@
       opacity: 0.8;
     }
 
-    /* ミニゲームモーダル（💩や💧が落ちてくる） */
+    /* ミニゲームモーダル */
     .analysis-modal {
       position: fixed;
       top: 0;
@@ -370,6 +370,7 @@
       touch-action: none;
     }
 
+    /* 💩💧落ちもの用 */
     .mini-item {
       position: absolute;
       width: 24px;
@@ -389,6 +390,27 @@
       height: 10px;
       border-radius: 10px;
       background: #ff9a59;
+    }
+
+    /* 並べる系ブロック */
+    .mini-block {
+      position: absolute;
+      width: 28px;
+      height: 18px;
+      border-radius: 4px;
+      background: #ffd8aa;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    /* 掃除系の汚れ */
+    .mini-dirt {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff7e9 0%, #d9a97a 40%, #b37846 100%);
+      box-shadow: 0 0 4px rgba(0,0,0,0.2);
+      cursor: pointer;
     }
 
     .mini-footer {
@@ -497,9 +519,6 @@
     }
 
     .start-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       border: none;
       border-radius: 999px;
       padding: 8px 18px;
@@ -584,7 +603,7 @@
       <div class="game-area">
         <p class="status" id="taskText"></p>
         <p class="task-hint" id="taskHint">
-          まずは5秒だけ、謎の落ちものミニゲームで「なんとなくお世話」してみてください。
+          まずは5秒だけ、ミニゲームで「なんとなくお世話」してみてください。
         </p>
         <div class="care-buttons" id="ratingButtons">
           <button class="btn" data-score="0">
@@ -618,9 +637,9 @@
       </p>
       <ul class="start-list">
         <li>1つ目のお世話から順番に表示されます。</li>
-        <li>毎回5秒だけ、💩や💧が落ちてくるミニゲームをします。</li>
-        <li>その後、「つまらない度」を3段階でジャッジします。</li>
-        <li>選んだジャッジの内訳に応じて、キャラが10段階くらいで変化します。</li>
+        <li>毎回5秒だけ、言葉にちなんだミニゲームで「ちょっとだけ体験」します。</li>
+        <li>ときどき、💩や💧が落ちてくるだけの意味のないゲームも混ざります。</li>
+        <li>そのあと、「つまらない度」を3段階でジャッジします。</li>
       </ul>
       <p class="start-hint">
         「つまらない」をちゃんと眺めると、案外おもしろいかもしれません。
@@ -629,12 +648,12 @@
     </div>
   </div>
 
-  <!-- ミニお世話ゲーム（5秒だけの💩／💧落ちものゲーム） -->
+  <!-- ミニお世話ゲーム -->
   <div class="analysis-modal" id="miniModal">
     <div class="analysis-content">
       <h2 class="analysis-title">ミニお世話ゲーム</h2>
       <p class="mini-caption" id="miniCaption">
-        今回の「つまらないお世話」を、なぜか落ちてくる何かを拾うゲームで表現しています。（あまり意味はありません）
+        今回の「つまらないお世話」を、ちょっとだけ体験するミニゲームです。
       </p>
       <div class="mini-area" id="miniArea">
         <div id="miniCatcher"></div>
@@ -802,15 +821,18 @@
     const ratings = [];            // 各お世話のジャッジ（0,1,2）
     let miniPlayedForThisTask = false;
 
-    // ミニゲーム用
+    // ミニゲーム共通
     let miniPlaying = false;
     let miniStartTime = 0;
     const miniDuration = 5000; // 5秒
     let miniTimerInterval = null;
     let miniGameInterval = null;
-    let miniItems = [];
     let miniCaught = 0;
     let catcherX = 0;
+    let miniType = 'poopdrop'; // 'poopdrop' | 'align' | 'clean'
+
+    // 💩💧落ちもの用
+    let miniItems = [];
     let miniSymbolMode = 'random'; // 'poop' | 'drop' | 'random'
 
     // つまらないキャラの段階（さなぎ以降・10段階）
@@ -840,6 +862,24 @@
         else if (r === 2) count2++;
       });
       return { count0, count1, count2 };
+    }
+
+    // お世話テキストからミニゲーム種別をざっくり決める
+    function decideMiniTypeForTask(text, index) {
+      const t = text;
+
+      // 並べる・そろえる系
+      if (t.includes('並べ') || t.includes('ならべ') || t.includes('そろえる') || t.includes('そろえて') || t.includes('順に')) {
+        return 'align';
+      }
+
+      // 掃除・ごみ・ほこり系
+      if (t.includes('ほこり') || t.includes('ゴミ') || t.includes('ごみ') || t.includes('水しぶき') || t.includes('掃除') || t.includes('ごみ袋')) {
+        return 'clean';
+      }
+
+      // それ以外は💩💧落ちものゲーム
+      return 'poopdrop';
     }
 
     // =====================
@@ -899,7 +939,7 @@
       taskStageLabelEl.textContent = `${no} / ${TOTAL_TASKS}`;
       taskTextEl.textContent = tasks[currentIndex];
       taskHintEl.textContent =
-        'まずは5秒だけ、謎の落ちものミニゲームで「なんとなくお世話」してみてください。';
+        'まずは5秒だけ、ミニゲームで「なんとなくお世話」してみてください。';
       logMessageEl.textContent = '';
     }
 
@@ -1026,31 +1066,8 @@
     }
 
     // =====================
-    // ミニゲーム関連（💩と💧）
+    // ミニゲーム共通
     // =====================
-    function resetMiniGameView() {
-      miniPlaying = false;
-      miniStartTime = 0;
-      miniItems.forEach(obj => {
-        if (obj.el && obj.el.parentNode === miniAreaEl) {
-          miniAreaEl.removeChild(obj.el);
-        }
-      });
-      miniItems = [];
-      miniCaught = 0;
-      miniTimerEl.textContent = '5.0';
-      miniCounterEl.textContent = 'とれた数：0';
-      miniCaptionEl.textContent =
-        '今回の「つまらないお世話」を、なぜか落ちてくる何かを拾うゲームで表現しています。（あまり意味はありません）';
-      miniStartBtn.disabled = false;
-      miniStartBtn.classList.remove('hidden');
-      miniOkBtn.classList.add('hidden');
-
-      const rect = miniAreaEl.getBoundingClientRect();
-      catcherX = rect.width / 2;
-      miniCatcherEl.style.left = (catcherX - 20) + 'px';
-    }
-
     function stopMiniGame() {
       miniPlaying = false;
       if (miniTimerInterval) {
@@ -1061,11 +1078,30 @@
         clearInterval(miniGameInterval);
         miniGameInterval = null;
       }
-      miniItems.forEach(obj => {
-        if (obj.el && obj.el.parentNode === miniAreaEl) {
-          miniAreaEl.removeChild(obj.el);
+    }
+
+    function resetMiniGameView() {
+      stopMiniGame();
+      miniCaught = 0;
+      miniTimerEl.textContent = '5.0';
+      miniCounterEl.textContent = 'とれた数：0';
+
+      miniStartBtn.disabled = false;
+      miniStartBtn.classList.remove('hidden');
+      miniOkBtn.classList.add('hidden');
+
+      // ミニエリアからキャッチャー以外の要素を削除
+      Array.from(miniAreaEl.children).forEach(child => {
+        if (child !== miniCatcherEl) {
+          miniAreaEl.removeChild(child);
         }
       });
+
+      // キャッチャー位置を中央へ
+      const rect = miniAreaEl.getBoundingClientRect();
+      catcherX = rect.width / 2;
+      miniCatcherEl.style.left = (catcherX - 20) + 'px';
+
       miniItems = [];
     }
 
@@ -1074,7 +1110,6 @@
       miniPlaying = true;
       miniStartTime = performance.now();
       miniCaught = 0;
-      miniCounterEl.textContent = 'とれた数：0';
       miniStartBtn.disabled = true;
 
       miniTimerInterval = setInterval(() => {
@@ -1086,7 +1121,10 @@
         }
       }, 80);
 
-      miniGameInterval = setInterval(updateMiniGame, 30);
+      // フレーム更新が必要なのは💩💧ゲームだけ
+      if (miniType === 'poopdrop') {
+        miniGameInterval = setInterval(updatePoopDropGame, 30);
+      }
     }
 
     function endMiniGame() {
@@ -1094,10 +1132,19 @@
       stopMiniGame();
       miniStartBtn.classList.add('hidden');
       miniOkBtn.classList.remove('hidden');
-      miniCaptionEl.textContent =
-        'ミニゲーム終了。たくさん取れても取れなくても、現実世界はあまり変わりません。';
+
+      let msg = 'ミニゲーム終了。いっぱいやっても、現実世界はあまり変わりません。';
+      if (miniType === 'align') {
+        msg = 'ミニゲーム終了。そろえてもそろえなくても、誰も見ていないかもしれません。';
+      } else if (miniType === 'clean') {
+        msg = 'ミニゲーム終了。いくらタップしても、また汚れる気がしてきました。';
+      }
+      miniCaptionEl.textContent = msg;
     }
 
+    // =====================
+    // 💩💧 落ちものゲーム
+    // =====================
     function decideMiniSymbolModeForTask() {
       const no = currentIndex + 1;
       // 18の倍数回は💩メイン、27の倍数回は💧メイン、それ以外はランダム
@@ -1138,7 +1185,7 @@
       miniItems.push({ x, y, el: itemEl });
     }
 
-    function updateMiniGame() {
+    function updatePoopDropGame() {
       const areaRect = miniAreaEl.getBoundingClientRect();
       const catcherWidth = 40;
       const catcherY = areaRect.height - 6 - 10;
@@ -1177,28 +1224,127 @@
       miniCatcherEl.style.left = (catcherX - catcherWidth / 2) + 'px';
     }
 
-    function onMiniPointerMove(e) {
+    // =====================
+    // 並べるミニゲーム
+    // =====================
+    function setupAlignMini() {
+      miniCatcherEl.style.display = 'none';
+      miniCounterEl.textContent = 'そろえた数：0';
+      miniCaught = 0;
+
       const rect = miniAreaEl.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const targetY = rect.height / 2;
+
+      const blockCount = 5;
+      for (let i = 0; i < blockCount; i++) {
+        const block = document.createElement('div');
+        block.className = 'mini-block';
+
+        const x = 20 + Math.random() * (rect.width - 40);
+        const y = 20 + Math.random() * (rect.height - 60);
+
+        block.style.left = (x - 14) + 'px';
+        block.style.top = y + 'px';
+
+        block.addEventListener('click', () => {
+          // タップすると中央ラインにそろう
+          block.style.top = (targetY - 9) + 'px';
+          miniCaught += 1;
+          miniCounterEl.textContent = 'そろえた数：' + miniCaught;
+        });
+
+        miniAreaEl.appendChild(block);
+      }
+    }
+
+    // =====================
+    // 掃除ミニゲーム
+    // =====================
+    function setupCleanMini() {
+      miniCatcherEl.style.display = 'none';
+      miniCounterEl.textContent = 'こすった数：0';
+      miniCaught = 0;
+
+      const rect = miniAreaEl.getBoundingClientRect();
+      const dirtCount = 7;
+      for (let i = 0; i < dirtCount; i++) {
+        const dirt = document.createElement('div');
+        dirt.className = 'mini-dirt';
+
+        const x = 20 + Math.random() * (rect.width - 40);
+        const y = 20 + Math.random() * (rect.height - 60);
+
+        dirt.style.left = (x - 10) + 'px';
+        dirt.style.top = (y - 10) + 'px';
+
+        dirt.addEventListener('click', () => {
+          miniCaught += 1;
+          miniCounterEl.textContent = 'こすった数：' + miniCaught;
+          // こすっても消えない。ちょっとだけ位置をずらす。
+          const dx = (Math.random() - 0.5) * 10;
+          const dy = (Math.random() - 0.5) * 10;
+          const currentLeft = parseFloat(dirt.style.left);
+          const currentTop = parseFloat(dirt.style.top);
+          dirt.style.left = (currentLeft + dx) + 'px';
+          dirt.style.top = (currentTop + dy) + 'px';
+        });
+
+        miniAreaEl.appendChild(dirt);
+      }
+    }
+
+    // =====================
+    // ミニゲーム起動
+    // =====================
+    function openMiniForCurrentTask() {
+      miniType = decideMiniTypeForTask(tasks[currentIndex], currentIndex);
+      miniModalEl.style.display = 'flex';
+
+      let extra = '';
+      if (miniType === 'align') {
+        extra = '四角いブロックをタップして、なんとなく一列にそろえてみてください。';
+      } else if (miniType === 'clean') {
+        extra = '汚れのような丸をタップして、「こすっても消えない感じ」を味わってください。';
+      } else {
+        extra = '💩や💧をキャッチするだけの、ほとんど意味のない落ちものゲームです。';
+      }
+
+      miniCaptionEl.textContent =
+        `「${tasks[currentIndex].split('（')[0]}」を、ちょっとだけ体験するミニゲームです。${extra}`;
+
+      resetMiniGameView();
+
+      if (miniType === 'align') {
+        setupAlignMini();
+      } else if (miniType === 'clean') {
+        setupCleanMini();
+      } else {
+        // 💩💧ゲーム
+        miniCatcherEl.style.display = 'block';
+        decideMiniSymbolModeForTask();
+        miniCounterEl.textContent = 'とれた数：0';
+      }
+    }
+
+    // ポインタ操作（💩💧キャッチャー用）
+    miniAreaEl.addEventListener('mousemove', (e) => {
+      const rect = miniAreaEl.getBoundingClientRect();
+      const clientX = e.clientX;
       let x = clientX - rect.left;
       x = Math.max(20, Math.min(rect.width - 20, x));
       catcherX = x;
       const catcherWidth = 40;
       miniCatcherEl.style.left = (catcherX - catcherWidth / 2) + 'px';
-    }
+    });
 
-    function openMiniForCurrentTask() {
-      miniModalEl.style.display = 'flex';
-      miniCaptionEl.textContent =
-        `「${tasks[currentIndex].split('（')[0]}」を、なぜか💩と💧の落ちものゲームで再現しています。（あまり関係はありません）`;
-      decideMiniSymbolModeForTask();
-      resetMiniGameView();
-    }
-
-    // ポインタ操作
-    miniAreaEl.addEventListener('mousemove', onMiniPointerMove);
     miniAreaEl.addEventListener('touchmove', function (e) {
-      onMiniPointerMove(e);
+      const rect = miniAreaEl.getBoundingClientRect();
+      const clientX = e.touches[0].clientX;
+      let x = clientX - rect.left;
+      x = Math.max(20, Math.min(rect.width - 20, x));
+      catcherX = x;
+      const catcherWidth = 40;
+      miniCatcherEl.style.left = (catcherX - catcherWidth / 2) + 'px';
       e.preventDefault();
     }, { passive: false });
 
@@ -1233,15 +1379,12 @@
       updateBoredomMeter();
     }
 
-    // ページ読み込み時：状態だけセット（ミニゲームはまだ開かない）
     window.addEventListener('load', () => {
       initGame();
     });
 
-    // スタート画面のボタン
     startGameBtn.addEventListener('click', () => {
       startOverlayEl.style.display = 'none';
-      // 新しいゲームをスタート
       initGame();
       openMiniForCurrentTask();
     });
