@@ -569,7 +569,7 @@
       {
         id: 'himapon',
         name: 'ひまポン',
-        image: 'public/chara/himapon.png', // ひまポンの画像パス
+        image: 'public/chara/himapon.png',
         type: 'ひまわり癒し系',
         tags: ['ひだまり担当', 'がんばりすぎ防止係'],
         boringLevel: 1,
@@ -689,8 +689,7 @@
     // 初期化
     document.addEventListener('DOMContentLoaded', () => {
       renderCharGrid();
-      // 最初にひまポンが選ばれるようにしてもいいですし、
-      // 先頭キャラにしたい場合は characters[0].id を使ってください。
+      // 最初にひまポンが選ばれるように
       setActiveCharacter('himapon');
     });
   </script>
