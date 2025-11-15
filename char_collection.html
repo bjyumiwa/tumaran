@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>つまらないお世話ゲーム - キャラコレクション</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Hiragino Sans', 'Yu Gothic', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #8B5A3C 0%, #A0522D 100%);
+      min-height: 100vh;
+      color: #4A3A2A;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #F5F5DC;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title-main {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .title-sub {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .back-button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #8B5A3C;
+      color: #FDF7E6;
+      box-shadow: 0 3px 0 #5c3923;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .back-button:hover {
+      transform: translateY(-1px);
+      opacity: 0.9;
+    }
+
+    .back-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 #5c3923;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.3fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 左側：キャラ一覧 */
+
+    .char-list-card {
+      background: #FFF8E7;
+      border-radius: 16px;
+      padding: 16px;
+      border: 2px solid #E0D2AA;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 260px;
+    }
+
+    .char-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .char-list-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .char-count {
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #E5D7B5;
+    }
+
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .char-card {
+      background: #FDF7E6;
+      border-radius: 12px;
+      padding: 6px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .char-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      background: #FFF9EE;
+    }
+
+    .char-card.active {
+      border-color: #D58B3B;
+      background: #FFEFD0;
+      box-shadow: 0 0 0 2px rgba(213, 139, 59, 0.25);
+    }
+
+    .char-thumb-wrapper {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid #E6D6AA;
+    }
+
+    .char-thumb {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      image-rendering: auto;
+    }
+
+    .char-name {
+      font-size: 0.8rem;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* 右側：説明パネル */
+
+    .detail-card {
+      background: #FFF8E7;
+      border-radius: 16px;
+      padding: 18px;
+      border: 2px solid #E0D2AA;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .detail-image-wrapper {
+      width: 96px;
+      height: 96px;
+      border-radius: 24px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid #E6D6AA;
+      flex-shrink: 0;
+    }
+
+    .detail-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .detail-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .detail-type {
+      font-size: 0.85rem;
+      opacity: 0.85;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #E9DFC4;
+    }
+
+    .detail-text {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      margin-top: 6px;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 2px;
+    }
+
+    .care-list {
+      font-size: 0.85rem;
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .care-list li {
+      margin: 2px 0;
+    }
+
+    .boring-meter {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .boring-bar {
+      flex: 1;
+      height: 6px;
+      border-radius: 999px;
+      background: #E0D2AA;
+      overflow: hidden;
+    }
+
+    .boring-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #C9A14A, #D65C2B);
+      width: 50%;
+    }
+
+    .empty-state {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-top: 8px;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      opacity: 0.75;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="title-block">
+        <div class="title-main">キャラコレクション辞典</div>
+        <div class="title-sub">つまらないお世話たちの、ささやかなプロフィール集</div>
+      </div>
+      <button class="back-button" onclick="window.location.href='index.html'">
+        ← ゲーム画面にもどる
+      </button>
+    </header>
+
+    <main class="layout">
+      <!-- 左：キャラ一覧 -->
+      <section class="char-list-card">
+        <div class="char-list-header">
+          <div class="char-list-title">キャラをえらんでね</div>
+          <div class="char-count" id="charCount"></div>
+        </div>
+
+        <div class="char-grid" id="charGrid">
+          <!-- JSでキャラを生成 -->
+        </div>
+      </section>
+
+      <!-- 右：説明パネル -->
+      <section class="detail-card" id="detailCard">
+        <div class="detail-header">
+          <div class="detail-image-wrapper">
+            <img src="" alt="" class="detail-image" id="detailImage">
+          </div>
+          <div class="detail-title-block">
+            <div class="detail-name" id="detailName">キャラをクリックしてね</div>
+            <div class="detail-type" id="detailType">つまらないお世話キャラ辞典</div>
+            <div class="tag-row" id="tagRow">
+              <!-- タグを表示 -->
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-text" id="detailDescription">
+          左のキャラをタップ / クリックすると、この場所にキャラの説明が表示されます。
+          あなたの毎日の「つまらないお世話」と、どのキャラが仲よくなれそうか考えてみてもいいかもしれませんね。
+        </div>
+
+        <div class="section-title">このキャラがよろこぶ「つまらないお世話」例</div>
+        <ul class="care-list" id="careList">
+          <li>まだ何も選ばれていません。</li>
+        </ul>
+
+        <div class="boring-meter">
+          <span>つまらない度</span>
+          <div class="boring-bar">
+            <div class="boring-fill" id="boringFill"></div>
+          </div>
+          <span id="boringLabel">- / 5</span>
+        </div>
+
+        <div class="footer-note">
+          ※つまらない度は、キャラの世界観にもとづいたゆるい目安です。  
+          他にどんな「つまらないお世話」がこのキャラに合いそうか、想像してみるのもおもしろいかもしれませんね。
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // キャラデータ
+    // 画像パスは public から始めています。
+    // ひまポンの画像は「public/chara/himapon.png」で保存した想定です。
+    // ファイル名が違う場合は image の部分だけ書き換えてください。
+
+    const characters = [
+      {
+        id: 'hokorin',
+        name: 'ほこりん',
+        image: 'public/chara/hokorin.png',
+        type: 'すみっこほこり系',
+        tags: ['おそうじまち', '見て見ぬふりの達人'],
+        boringLevel: 4,
+        description:
+          '部屋のすみっこで、そっとたまっていくほこりの妖精。' +
+          '\n一気に大掃除されるより、ちょっとだけかまってもらえると満足する。' +
+          '\n「今日はこの隅だけ…」というゆるいおそうじと相性がいいキャラ。',
+        cares: [
+          'リモコンの下だけふいてみる',
+          '本棚の上のほこりを1本指でなぞってみる',
+          '机のはじっこだけウェットティッシュでふく'
+        ]
+      },
+      {
+        id: 'nurezoukin',
+        name: 'ぬれぞうきん',
+        image: 'public/chara/nurezoukin.png',
+        type: 'しぼられ待ちタオル系',
+        tags: ['水びたし', 'しぼってほしい'],
+        boringLevel: 5,
+        description:
+          'シンクのわきで、しずかに出番を待つぞうきん。' +
+          '\nびちょびちょのまま放置されがちだが、本当はきゅっとしぼって干してほしい。' +
+          '\n「ついでお世話」が得意な人と仲良くなれる。',
+        cares: [
+          '使い終わったらギュッとしぼってあげる',
+          '一番日が当たる場所に干してあげる',
+          '名前をつけて「今日もありがとう」と声をかける'
+        ]
+      },
+      {
+        id: 'chap_denchi',
+        name: 'チャプ電池',
+        image: 'public/chara/chap_denchi.png',
+        type: '残量ギリギリ系',
+        tags: ['充電わすれ', 'ピンチが日常'],
+        boringLevel: 3,
+        description:
+          'スマホやリモコンの中で、ギリギリまでがんばる電池キャラ。' +
+          '\n赤い残量マークになると、ちょっとだけかまってほしくなる。' +
+          '\n「今のうちに充電しとくか」が言える人と相性よし。',
+        cares: [
+          '寝る前に充電ケーブルをさしてあげる',
+          '使っていないリモコンの電池をチェックする',
+          'コンセント周りをすこしだけ整える'
+        ]
+      },
+      {
+        id: 'post_kun',
+        name: 'ポストくん',
+        image: 'public/chara/post_kun.png',
+        type: 'たまり郵便系',
+        tags: ['ポストパンパン', 'ときどき整理'],
+        boringLevel: 2,
+        description:
+          'ポストの中で、チラシや封筒たちを抱えこんでいるキャラ。' +
+          '\n「見てないお知らせ」がたまっていくと、ちょっと重たくなる。' +
+          '\n全部じゃなくても、1枚チェックしてもらえると喜ぶ。',
+        cares: [
+          'ポストをあけて一番上の1枚だけ中身を見る',
+          'いらないチラシをすぐ紙ゴミに出す',
+          '「あとで読む」ものを1か所にまとめる'
+        ]
+      },
+      {
+        id: 'inemuri_slipper',
+        name: 'いねむりスリッパ',
+        image: 'public/chara/inemuri_slipper.png',
+        type: 'さまよい靴系',
+        tags: ['片方どこ', 'リビング迷子'],
+        boringLevel: 3,
+        description:
+          '片方だけソファの下にいたり、玄関の真ん中で寝ていたりするスリッパ。' +
+          '\nペアにしてそろえてもらえると、ちょっと誇らしげになる。' +
+          '\n足もとの「ついで整え」に向いているキャラ。',
+        cares: [
+          '片方見つけたら、もう片方のそばにそっと置く',
+          '玄関のスリッパをそろえて並べる',
+          '今日のベストポジションにスリッパ置き場を決める'
+        ]
+      },
+      {
+        id: 'suberikomi_calendar',
+        name: 'すべり込みカレンダー',
+        image: 'public/chara/suberikomi_calendar.png',
+        type: '日付おくれ系',
+        tags: ['めくられ待ち', '予定メモ係'],
+        boringLevel: 2,
+        description:
+          '先月のままページがめくられていないカレンダー。' +
+          '\nたまに思い出してもらえると、「今月もよろしく」とニヤリとする。' +
+          '\n予定管理が苦手な人とも、ゆるく付き合える存在。',
+        cares: [
+          '今日だけでも日付に丸をつける',
+          '見える場所に1つだけカレンダーを移動する',
+          '大事な予定を1つだけ書き込む'
+        ]
+      },
+      {
+        id: 'kumori_megane',
+        name: 'くもりメガネ',
+        image: 'public/chara/kumori_megane.png',
+        type: 'レンズもやもや系',
+        tags: ['視界ぼやぼや', 'ふきとり待ち'],
+        boringLevel: 4,
+        description:
+          '指紋やホコリでいつもすこしだけくもっているメガネ。' +
+          '\n世界をはっきり見せたいけれど、なかなかふいてもらえない。' +
+          '\n「今のうちに一ふき」ができると、ぐっと仲良くなれる。',
+        cares: [
+          'ティッシュや専用クロスでレンズを一ふきする',
+          'メガネ置き場を1か所決める',
+          'メガネ越しの景色を1回だけゆっくり眺めてみる'
+        ]
+      },
+      {
+        id: 'taoru_tan',
+        name: 'タオルたん',
+        image: 'public/chara/taoru_tan.png',
+        type: 'かけっぱなし布系',
+        tags: ['なんとなく湿っぽい', 'そろそろ洗濯かも'],
+        boringLevel: 3,
+        description:
+          '洗面所やキッチンにぶらさがっているタオルのキャラ。' +
+          '\nそろそろ洗ってほしいけれど、今日もなんとなく使われてしまう。' +
+          '\n「一枚だけ交換」ができると、とても喜ぶタイプ。',
+        cares: [
+          '一番くたびれたタオルを今日だけ新しいものに変える',
+          'タオルをきれいにたたんで掛けなおす',
+          '好きな色のタオルを一枚だけ前に出す'
+        ]
+      },
+      {
+        id: 'wifi_obake',
+        name: 'Wi-Fiおばけ',
+        image: 'public/chara/wifi_obake.png',
+        type: '電波ふらふら系',
+        tags: ['とぎれとぎれ通信', 'ルーター見守り'],
+        boringLevel: 2,
+        description:
+          '電波が弱いときに、ふわっと現れるWi-Fiおばけ。' +
+          '\nルーターまわりをちょっとだけ整えてもらえると、ごきげんになる。' +
+          '\nデジタル系の「つまらないお世話」を象徴するキャラ。',
+        cares: [
+          'ルーターのほこりをふいてあげる',
+          '使っていないケーブルを1本だけはずす',
+          'Wi-Fiの場所を少しだけ高い位置に移動してみる'
+        ]
+      },
+      {
+        id: 'tsumikasane_receipt',
+        name: 'つみかさねレシート',
+        image: 'public/chara/tsumikasane_receipt.png',
+        type: '紙の山系',
+        tags: ['おさいふパンパン', '机のすみっこ占領'],
+        boringLevel: 5,
+        description:
+          'レシートや小さな紙たちが、じわじわと山をつくっているキャラ。' +
+          '\n全部整理してとは言わないけれど、1枚でも仕分けてもらえるとほっとする。' +
+          '\n「今ここだけ」のミニ片づけと相性がいい。',
+        cares: [
+          'レシートを1枚だけ捨てるか撮影して記録する',
+          '紙の山を1か所にまとめてクリップで留める',
+          '重要そうな紙を「たいせつフォルダ」に移動する'
+        ]
+      },
+      {
+        id: 'endless_memorin',
+        name: 'エンドレスメモリン',
+        image: 'public/chara/endless_memorin.png',
+        type: 'やることメモ系',
+        tags: ['チェックボックスだらけ', '終わらないToDo'],
+        boringLevel: 4,
+        description:
+          '手帳やアプリの片隅に住んでいる、やることメモの精。' +
+          '\n全部終わらなくても、1つに丸がつくだけでかなりうれしい。' +
+          '\n「今日はこれだけ」のゆるい達成感を応援してくれる。',
+        cares: [
+          '今日やったことを1つだけメモに書き足す',
+          '終わったタスクにチェックをつける',
+          'もうやらないタスクには思い切ってバツ印をつける'
+        ]
+      },
+      {
+        id: 'himapon',
+        name: 'ひまポン',
+        image: 'public/chara/himapon.png', // ひまポンの画像パス
+        type: 'ひまわり癒し系',
+        tags: ['ひだまり担当', 'がんばりすぎ防止係'],
+        boringLevel: 1,
+        description:
+          'ひまわりのような顔をした、やさしい癒し系キャラ。' +
+          '\nあなたが「つまらないお世話」をがんばりすぎていると、そっとブレーキをかけてくれる。' +
+          '\n何もしない時間や、ぼーっとする時間も大事だよ、と見守っている存在。',
+        cares: [
+          '1分だけ窓の外を眺めて深呼吸する',
+          '今日やらなかったことを1つ「まあいいか」と許してみる',
+          'ひまポンの画像をスマホに入れて、見るだけの休憩タイムをつくる'
+        ]
+      }
+    ];
+
+    // DOM取得
+    const charGrid = document.getElementById('charGrid');
+    const charCount = document.getElementById('charCount');
+
+    const detailImage = document.getElementById('detailImage');
+    const detailName = document.getElementById('detailName');
+    const detailType = document.getElementById('detailType');
+    const tagRow = document.getElementById('tagRow');
+    const detailDescription = document.getElementById('detailDescription');
+    const careList = document.getElementById('careList');
+    const boringFill = document.getElementById('boringFill');
+    const boringLabel = document.getElementById('boringLabel');
+
+    let activeId = null;
+
+    function renderCharGrid() {
+      charGrid.innerHTML = '';
+      characters.forEach((chara) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'char-card';
+        card.dataset.id = chara.id;
+
+        const thumbWrapper = document.createElement('div');
+        thumbWrapper.className = 'char-thumb-wrapper';
+
+        const img = document.createElement('img');
+        img.className = 'char-thumb';
+        img.src = chara.image;
+        img.alt = chara.name;
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'char-name';
+        nameEl.textContent = chara.name;
+
+        thumbWrapper.appendChild(img);
+        card.appendChild(thumbWrapper);
+        card.appendChild(nameEl);
+
+        card.addEventListener('click', () => {
+          setActiveCharacter(chara.id);
+        });
+
+        charGrid.appendChild(card);
+      });
+
+      charCount.textContent = `全 ${characters.length} キャラ`;
+    }
+
+    function setActiveCharacter(id) {
+      activeId = id;
+      const chara = characters.find(c => c.id === id);
+      if (!chara) return;
+
+      // カードの選択状態を更新
+      document.querySelectorAll('.char-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.id === id);
+      });
+
+      // 詳細パネル更新
+      detailImage.src = chara.image;
+      detailImage.alt = chara.name;
+      detailName.textContent = chara.name;
+      detailType.textContent = chara.type || 'つまらないお世話キャラ';
+
+      // タグ
+      tagRow.innerHTML = '';
+      if (chara.tags && chara.tags.length > 0) {
+        chara.tags.forEach(tagText => {
+          const tag = document.createElement('span');
+          tag.className = 'tag';
+          tag.textContent = tagText;
+          tagRow.appendChild(tag);
+        });
+      }
+
+      // 説明
+      detailDescription.textContent = chara.description || '';
+
+      // つまらないお世話リスト
+      careList.innerHTML = '';
+      if (chara.cares && chara.cares.length > 0) {
+        chara.cares.forEach(text => {
+          const li = document.createElement('li');
+          li.textContent = text;
+          careList.appendChild(li);
+        });
+      } else {
+        const li = document.createElement('li');
+        li.textContent = 'このキャラのお世話例は、まだひみつです。';
+        careList.appendChild(li);
+      }
+
+      // つまらない度（1〜5想定）
+      const level = chara.boringLevel || 3;
+      const maxLevel = 5;
+      const percent = Math.max(1, Math.min(level, maxLevel)) / maxLevel * 100;
+      boringFill.style.width = percent + '%';
+      boringLabel.textContent = `${level} / ${maxLevel}`;
+    }
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCharGrid();
+      // 最初にひまポンが選ばれるようにしてもいいですし、
+      // 先頭キャラにしたい場合は characters[0].id を使ってください。
+      setActiveCharacter('himapon');
+    });
+  </script>
+</body>
+</html>
